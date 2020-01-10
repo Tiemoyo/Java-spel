@@ -24,7 +24,8 @@ public class Room
     private String iname;               //item name
     private String idescription;        //item description
     private int iweight;                //weight of the item
-    
+    private boolean hasConvo;
+    private String convotype;
     
     /**
      * Create a room described "description". Initially, it has
@@ -38,6 +39,7 @@ public class Room
        
         exits = new HashMap<String, Room>();
         itemList = new HashMap<String, Item>();
+        hasConvo = false;
         this.iname = iname;
         this.idescription = idescription;
         this.iweight = iweight;
@@ -46,7 +48,7 @@ public class Room
         
      }
     
-     /**
+    /**
      * Define an exit from this room.
      * @param direction The direction of the exit.
      * @param neighbor  The room to which the exit leads.
@@ -72,28 +74,29 @@ public class Room
      */
     private String getExitString()
     {
-        String returnString = "Exits:";
+        String returnString = "\nExits:";
         Set<String> keys = exits.keySet();
         for(String exit : keys) {
             returnString += " " + exit;
         }
         return returnString;
     }
- public String getIDescription()
-{
-  return idescription;
-}
+    public String getIDescription()
+    {
+        return idescription;
+    }
     /**
      * Return a description of the room in the form:
      *     You are in the kitchen.
      *     Exits: north west
      * @return A long description of this room
      */
-   public String getLongDescription()
-{ 
-    return description + getExitString();
+    public String getLongDescription()
+    { 
+       return description + getExitString();
     
-} /** nh
+    } 
+    /** nh
      * Return the room that is reached if we go from this room in direction
      * "direction". If there is no room in that direction, return null.
      * @param direction The exit's direction.
@@ -103,13 +106,26 @@ public class Room
     {
         return exits.get(direction);
     
-}
-public void addItem(String name, String description, int weight)
-{
-  itemList.put(name, new Item(name, description, weight));
-}
-public String getItem(String name)
-{
-return name;
-}
+    }
+    public boolean getConvo()
+    {
+        return hasConvo;
+    }
+    public String getConvoType()
+    {
+        return convotype;
+    }
+    public void setConvo(String type)
+    {
+        hasConvo = true;
+        convotype = type;
+    }
+    public void addItem(String name, String description, int weight)
+    {
+        itemList.put(name, new Item(name, description, weight));
+    }
+    public String getItem(String name)
+    {
+     return name;
+    }
 }
