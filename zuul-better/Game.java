@@ -20,15 +20,16 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
+    private boolean inConvo;
     
     /**
      * Create the game and initialise its internal map.
      */
     public Game() 
     {
-       
         createRooms();
         parser = new Parser();
+        inConvo = false;
     }
    
     /**
@@ -38,35 +39,35 @@ public class Game
     {
         Room outside, theater, libary, hall, cellar, castle,
         second_floor, path, dining_room, bedroom, stairs, piano_room,
-        basement, chamber,jail, kitchen;
+        basement, chamber,jail, kitchen, training_ground;
       
         // create the rooms
-        outside = new Room("Infront of a castle door, would you like to enter?");
+        outside = new Room("You stand before the intimidating dark castle. To the north is the castle gate, to the west is a training ground.");
+        training_ground = new Room("You are in a training ground next to the castle. There is an old soldier tending to his equipment. Back to the east is the castle gate.");
         castle = new Room("You are in a dark castle, and there three paths to choose from...");
-        outside = new Room("just waiting outside the castle door");
         libary = new Room("This is the old castle libary, most books are barely holding together");
         hall = new Room("This is the hall of the castle");
         kitchen = new Room("You are in the kitchen. The smell here is disgusting");
         second_floor = new Room("There are more rooms here");
         path = new Room("You are in a small dark path");
         dining_room = new Room("You are in the dining room");
-       bedroom = new Room("You are in the bedroom of the old king and queen, there might be something useful here");
-       stairs = new Room("it's getting darker and darker");
-       piano_room = new Room("Nothing is in this room... just an old piano");
-       basement = new Room ("This is the basement, it is a very dark place... soft sounds can be heard");
+        bedroom = new Room("You are in the bedroom of the old king and queen, there might be something useful here");
+        stairs = new Room("it's getting darker and darker");
+        piano_room = new Room("Nothing is in this room... just an old piano");
+        basement = new Room ("This is the basement, it is a very dark place... soft sounds can be heard");
         chamber = new Room("This is an underground chamber. There is a tressurechest in the middle, but a monster is protecting it. Want to fight it?");
         jail = new Room("This is the jail. Just some skulls laying around the room");
         // initialise room exits
-        outside.setExit("yes", castle);
-        outside.setExit("no", outside);
-       
-       
+        outside.setExit("north", castle);
+        outside.setExit("west", outside);
+        
+        training_ground.setExit("east", outside);
+        training_ground.setConvo("trainer");
+        
         castle.setExit("left", hall);
         castle.setExit("right", libary);
         castle.setExit("up", second_floor);
         castle.setExit("down", path);
-
-        outside.setExit("back", outside);
 
         libary.setExit("north", dining_room);
         libary.setExit("east", castle);
@@ -90,6 +91,11 @@ public class Game
         //Beginnen met documentatie bijhouden
 
         currentRoom = outside;  // start game outside
+    }
+    
+    public void storeConvos()
+    {
+        
     }
 
     /**
@@ -153,6 +159,9 @@ public class Game
         else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
         }
+        else if (commandWord.equals("talk")) {
+            talk();
+        }
         // else command not recognised.
         return wantToQuit;
     }
@@ -191,11 +200,11 @@ public class Game
         Room nextRoom = currentRoom.getExit(direction);
 
         if (nextRoom == null) {
-            System.out.println("No useful items in this room");
+            System.out.println("Can't go there.");
         }
         else {
             currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
+            System.out.println(currentRoom.getShortDescription());
         }
     }
    
@@ -217,6 +226,15 @@ public class Game
     private void look()
     {
         System.out.println(currentRoom.getLongDescription());
+    }
+    private void talk()
+    {       
+        if(currentRoom.getConvo() == false){
+            System.out.println("You talk to yourself.");
+        }
+        else{
+            inConvo = true;
+        }
     }
     
 }
