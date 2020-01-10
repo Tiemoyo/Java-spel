@@ -81,7 +81,7 @@ public class Room
     }
  public String getIDescription()
 {
-return idescription;
+  return idescription;
 }
     /**
      * Return a description of the room in the form:
@@ -91,7 +91,7 @@ return idescription;
      */
    public String getLongDescription()
 { 
-    return description + ".\n" + getExitString();
+    return description + getExitString();
     
 } /** nh
      * Return the room that is reached if we go from this room in direction
@@ -108,9 +108,8 @@ public void addItem(String name, String description, int weight)
 {
   itemList.put(name, new Item(name, description, weight));
 }
-public String getItemDescription()
+public String getItem(String name)
 {
-  return idescription;
+return name;
 }
 }
-

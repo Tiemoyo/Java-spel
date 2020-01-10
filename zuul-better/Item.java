@@ -17,7 +17,7 @@ public class Item
  
  public Item(String iname, String idescription, int iweight)
  {   
-     
+     //initializing the item name, description and weight
      this.iname = iname;
      this.idescription = idescription;
      this.iweight = iweight;

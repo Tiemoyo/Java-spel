@@ -1,3 +1,4 @@
+
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -19,13 +20,13 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
-        
+    
     /**
      * Create the game and initialise its internal map.
      */
     public Game() 
     {
-        
+       
         createRooms();
         parser = new Parser();
     }
@@ -35,29 +36,29 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, libary, hall, cellar, castle,
+        Room outside, theater, libary, hall, cellar, castle,
         second_floor, path, dining_room, bedroom, stairs, piano_room,
         basement, chamber,jail, kitchen;
       
         // create the rooms
         outside = new Room("Infront of a castle door, would you like to enter?");
-        castle = new Room("dark castle, and there three paths to choose from...");
-        pub = new Room("just waiting outside the castle door");
+        castle = new Room("You are in a dark castle, and there three paths to choose from...");
+        outside = new Room("just waiting outside the castle door");
         libary = new Room("This is the old castle libary, most books are barely holding together");
         hall = new Room("This is the hall of the castle");
         kitchen = new Room("You are in the kitchen. The smell here is disgusting");
         second_floor = new Room("There are more rooms here");
         path = new Room("You are in a small dark path");
-        dining_room = new Room("in the dining room");
-       bedroom = new Room("in the bedroom of the old king and queen, there might be something useful here");
+        dining_room = new Room("You are in the dining room");
+       bedroom = new Room("You are in the bedroom of the old king and queen, there might be something useful here");
        stairs = new Room("it's getting darker and darker");
-       piano_room = new Room("Nothing in this room... just an old piano");
+       piano_room = new Room("Nothing is in this room... just an old piano");
        basement = new Room ("This is the basement, it is a very dark place... soft sounds can be heard");
-        chamber = new Room("This is an underground chamber. There is a tressure chest in the middle, but a monster is protecting it. Want to fight it?");
+        chamber = new Room("This is an underground chamber. There is a tressurechest in the middle, but a monster is protecting it. Want to fight it?");
         jail = new Room("This is the jail. Just some skulls laying around the room");
         // initialise room exits
         outside.setExit("yes", castle);
-        outside.setExit("no", pub);
+        outside.setExit("no", outside);
        
        
         castle.setExit("left", hall);
@@ -65,7 +66,7 @@ public class Game
         castle.setExit("up", second_floor);
         castle.setExit("down", path);
 
-        pub.setExit("back", outside);
+        outside.setExit("back", outside);
 
         libary.setExit("north", dining_room);
         libary.setExit("east", castle);
@@ -85,7 +86,8 @@ public class Game
         second_floor.setExit("down", castle);
         second_floor.setExit("left", bedroom);
         
-        
+        //09-01-2020 laatst veranderd.
+        //Beginnen met documentatie bijhouden
 
         currentRoom = outside;  // start game outside
     }
@@ -115,7 +117,7 @@ public class Game
     {
         System.out.println();
         System.out.println("Welcome to the World of Zuul!");
-        System.out.println("World of Zuul is a new, incredibly boring adventure game.");
+        System.out.println("World of Zuul is a new adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
@@ -165,7 +167,7 @@ public class Game
     private void printHelp() 
     {
         System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
+        System.out.println("around at a castle at midnight.");
         System.out.println();
         System.out.println("Your command words are:");
         parser.showCommands();
@@ -196,7 +198,7 @@ public class Game
             System.out.println(currentRoom.getLongDescription());
         }
     }
-
+   
     /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
