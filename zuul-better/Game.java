@@ -21,6 +21,14 @@ public class Game
     private Parser parser;
     private Room currentRoom;
     private boolean inConvo;
+    private boolean gameStart;
+    private Convo currentConvo;
+    
+    //The following are flags to ensure the conversation system works properly.
+    private Convo trainerfirst;
+    private Convo trainaccept;
+    private Convo trainrefuse;
+    private Convo trainreturn;
     
     /**
      * Create the game and initialise its internal map.
@@ -28,8 +36,10 @@ public class Game
     public Game() 
     {
         createRooms();
+        storeConvos();
         parser = new Parser();
         inConvo = false;
+        gameStart = false;
     }
    
     /**
@@ -59,10 +69,10 @@ public class Game
         jail = new Room("This is the jail. Just some skulls laying around the room");
         // initialise room exits
         outside.setExit("north", castle);
-        outside.setExit("west", outside);
+        outside.setExit("west", training_ground);
         
         training_ground.setExit("east", outside);
-        training_ground.setConvo("trainer");
+        training_ground.setConvo("trainerfirst");
         
         castle.setExit("left", hall);
         castle.setExit("right", libary);
@@ -93,9 +103,26 @@ public class Game
         currentRoom = outside;  // start game outside
     }
     
-    public void storeConvos()
+    private void storeConvos()
     {
+        Convo traininterest, traindisinterest;
         
+        //create the conversations
+        trainerfirst = new Convo("You greet the soldier.\n'Hello there, lad. You seem like you could use a bit of training, especially if you're thinkin' of heading into the castle'\nA. Declare your interest.\nB. You're not interested.");
+        traininterest = new Convo("'Good thinkin' lad. To tell ya truth I'm a bit rusty, so how about we spar? If ya win, I'll give ya one of my spare swords.'\nA. Accept.\nB. Refuse.");
+        traindisinterest = new Convo("'Confident, are ya? Listen here, if yer able to beat me one-on-one, you can win one of my swords'\nA. Accept.\nB. Refuse.");
+        trainaccept = new Convo("'Alright, let's see what you're made of.' This is in progress, so the conversation ends here.");
+        trainrefuse = new Convo("'It's your loss.' The soldier returns his attention to his equipment ending the conversation.");
+        trainreturn = new Convo("'Ah, you return! Want to give it another go?'\nYes.\nNo.");
+       
+        trainerfirst.setLink("a", traininterest);
+        trainerfirst.setLink("b", traindisinterest);
+        traininterest.setLink("a", trainaccept);
+        traininterest.setLink("b", trainrefuse);
+        traindisinterest.setLink("a", trainaccept);
+        traindisinterest.setLink("b", trainrefuse);
+        trainreturn.setLink("yes", trainaccept);
+        trainreturn.setLink("no", trainrefuse);
     }
 
     /**
@@ -113,7 +140,7 @@ public class Game
             Command command = parser.getCommand();
             finished = processCommand(command);
         }
-        System.out.println("Thank you for playing.  Good bye.");
+        System.out.println("Thank you for playing. Good bye.");
     }
 
     /**
@@ -124,9 +151,9 @@ public class Game
         System.out.println();
         System.out.println("Welcome to the World of Zuul!");
         System.out.println("World of Zuul is a new adventure game.");
-        System.out.println("Type 'help' if you need help.");
+        System.out.println("Type 'start' if you'd like to start the game. Type 'help' for commands.");
         System.out.println();
-        System.out.println(currentRoom.getLongDescription());
+        //System.out.println(currentRoom.getLongDescription());
     }
 
     /**
@@ -147,27 +174,57 @@ public class Game
         if (commandWord.equals("help")) {
             printHelp();
         }
-        else if (commandWord.equals("choose")){
-            goRoom(command);
-        }
-        else if (commandWord.equals("go")) {
-            goRoom(command);
-        }
-        else if (commandWord.equals("look")) {
-            look();
-        }
         else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
+         }
+        else if(gameStart == false){
+         if(commandWord.equals("start")){
+          start();
+         }
+         else if (commandWord.equals("go")) {
+          System.out.println("Game has not started yet.");
+         }
+         else if (commandWord.equals("look")) {
+          System.out.println("Game has not started yet.");
+         }
+         else if (commandWord.equals("talk")) {
+          System.out.println("Game has not started yet.");
+         }
         }
-        else if (commandWord.equals("talk")) {
-            talk();
+        else if(inConvo == false){
+          if (commandWord.equals("go")) {
+            goRoom(command);
+          }
+          else if (commandWord.equals("look")) {
+            look();
+          }
+          else if (commandWord.equals("talk")) {
+            talk(command);
+          }
+          else if (commandWord.equals("start")) {
+            System.out.println("Game has already started");  
+          }
+        }
+        else{
+          if (commandWord.equals("go")) {
+            System.out.println("Can't move while in conversation.");
+          }
+          else if (commandWord.equals("talk")) {
+            talk(command);
+          }
+          else if (commandWord.equals("look")) {
+            System.out.println("Can't look while in conversation.");
+          }
         }
         // else command not recognised.
         return wantToQuit;
     }
 
     // implementations of user commands:
-
+    private void start(){
+        gameStart = true;
+        System.out.println(currentRoom.getLongDescription());
+    }
     /**
      * Print out some help information.
      * Here we print some stupid, cryptic message and a list of the 
@@ -227,13 +284,52 @@ public class Game
     {
         System.out.println(currentRoom.getLongDescription());
     }
-    private void talk()
-    {       
-        if(currentRoom.getConvo() == false){
-            System.out.println("You talk to yourself.");
-        }
-        else{
-            inConvo = true;
+    private void talk(Command command)
+    {               
+        if(!command.hasSecondWord()){
+            if(currentRoom.getConvo() == false){
+               System.out.println("You talk to yourself.");
+            }
+            else if(inConvo == false){
+              //If there's a conversation available in the current room, conversation mode is activated and the conversation is called.
+              inConvo = true;
+              if(currentRoom.getConvoType() == "trainerfirst"){
+                currentConvo = trainerfirst;
+                System.out.println(currentConvo.getContent());
+              }
+              else if(currentRoom.getConvoType() == "trainreturn"){
+                currentConvo = trainreturn;
+                System.out.println(currentConvo.getContent());
+              }
+              else{
+                System.out.println("Error, no Convo called.");
+                inConvo = false;
+              }
+            }
+        }        
+        if(command.hasSecondWord()){
+            String link = command.getSecondWord();
+            Convo nextConvo = currentConvo.getLink(link);
+            if(nextConvo == null){
+                System.out.println("Invalid response.");
+            }
+            else{
+                //Here is how we move to different parts of the conversation and call those parts.
+                currentConvo = nextConvo;
+                System.out.println(currentConvo.getContent());
+                //Next we check for flags that signal the end of a conversation, and use them to end the conversation mode. 
+                //We'll also set a flag in the room to signal that we had the conversation in the first place.
+                if(currentConvo == trainaccept){
+                    inConvo = false;
+                    System.out.println(currentRoom.getShortDescription());
+                    currentRoom.setConvo("trainreturn");
+                }
+                else if(currentConvo == trainrefuse){
+                    inConvo = false;
+                    System.out.println(currentRoom.getShortDescription());
+                    currentRoom.setConvo("trainreturn");
+                }
+            }
         }
     }
     

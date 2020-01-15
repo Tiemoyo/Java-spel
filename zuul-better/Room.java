@@ -67,7 +67,7 @@ public class Room
         return description;
     }
       
-     /**
+    /**
      * Return a string describing the room's exits, for example
      * "Exits: north west".
      * @return Details of the room's exits.
