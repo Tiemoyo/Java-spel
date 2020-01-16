@@ -20,13 +20,9 @@ public class Room
 {
     private String description;
     private HashMap<String, Room> exits;// stores exits of this room.
-    private HashMap<String, Item> itemList;// stores items of this room.
-    private String iname;               //item name
-    private String idescription;        //item description
-    private int iweight;                //weight of the item
     private boolean hasConvo;
     private String convotype;
-    
+     
     /**
      * Create a room described "description". Initially, it has
      * no exits. "description" is something like "a kitchen" or
@@ -38,12 +34,9 @@ public class Room
         this.description = description;
        
         exits = new HashMap<String, Room>();
-        itemList = new HashMap<String, Item>();
         hasConvo = false;
-        this.iname = iname;
-        this.idescription = idescription;
-        this.iweight = iweight;
-        
+   
+      
         
         
      }
@@ -74,17 +67,14 @@ public class Room
      */
     private String getExitString()
     {
-        String returnString = "\nExits:";
+        String returnString = "\n" + "Exits:";
         Set<String> keys = exits.keySet();
         for(String exit : keys) {
             returnString += " " + exit;
         }
         return returnString;
     }
-    public String getIDescription()
-    {
-        return idescription;
-    }
+   
     /**
      * Return a description of the room in the form:
      *     You are in the kitchen.
@@ -120,12 +110,11 @@ public class Room
         hasConvo = true;
         convotype = type;
     }
-    public void addItem(String name, String description, int weight)
-    {
-        itemList.put(name, new Item(name, description, weight));
+    public void addItem(String iname, String idescription, int iweight)
+    {   
+       
+       Item item = new Item("sword", "sharp", 30);
     }
-    public String getItem(String name)
-    {
-     return name;
-    }
+
+
 }
