@@ -21,10 +21,10 @@ public class lang
 {
     private Parser parser;
     private Room currentRoom;
+    private Room previousRoom;
     private boolean inConvo;
     private ArrayList<Item> inventory;
-    private HashMap<CommandLang, CommandLang> command = new HashMap<CommandLang, CommandLang>();
-   
+    
     /**
      * Create the game and initialise its internal map.
      */
@@ -160,7 +160,7 @@ public class lang
      * @param command The command to be processed.
      * @return true If the command ends the game, false otherwise.
      */
-    private boolean processCommand(CommandLang command) 
+    private boolean processCommand(Command command) 
     {
         boolean wantToQuit = false;
         
@@ -194,6 +194,9 @@ public class lang
         else if (command.equals("pak")){          
             //take(); werkt nog niet
         }
+        else if (command.equals("terug")){
+            goBack(command);
+        }
         // else command not recognised.
         return wantToQuit;
     }
@@ -212,9 +215,26 @@ public class lang
         System.out.println();
         System.out.println("Uw commands zijn: ");
         parser.showCommands();
+    } private void enterRoom(Room nextRoom) {
+      previousRoom = currentRoom;
+      currentRoom = nextRoom;
+      System.out.println(currentRoom.getLongDescription());
     }
-
-    /** 
+    private void goBack(Command command)
+    {
+        if(command.hasSecondWord()){
+         System.out.println("Terug waarheen?");
+                return;
+            }
+        if (previousRoom == null){
+                System.out.println("Sorry, maar u kunt niet nog een kamer terug");
+                
+            }
+            else{
+                enterRoom(previousRoom);
+           
+            }
+        }/** 
      * Try to in to one direction. If there is an exit, enter the new
      * room, otherwise print an error message.
      */
