@@ -9,18 +9,18 @@
  * @version 2016.02.29
  */
 
-public class CommandWords
+public class CommandLang
 {
     // a constant array that holds all valid command words
     private static final String[] validCommands = {
-        "start", "go", "quit", "help", "look", "eat", "talk", "inventory", "take",
-         };
+         
+         "ga", "kijk", "stop", "praat", "tas"};
     
 
     /**
      * Constructor - initialise the command words.
      */
-    public CommandWords()
+    public CommandLang()
     {
         
     }

@@ -1,4 +1,5 @@
-
+import java.util.ArrayList;
+import java.util.HashMap;
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -23,12 +24,14 @@ public class Game
     private boolean inConvo;
     private boolean gameStart;
     private Convo currentConvo;
+    private ArrayList<Item> inventory;
     
     //The following are flags to ensure the conversation system works properly.
     private Convo trainerfirst;
     private Convo trainaccept;
     private Convo trainrefuse;
     private Convo trainreturn;
+    
     
     /**
      * Create the game and initialise its internal map.
@@ -40,6 +43,11 @@ public class Game
         parser = new Parser();
         inConvo = false;
         gameStart = false;
+        parser = new Parser();
+        inventory = new ArrayList<Item>();
+        
+        createRooms();
+    
     }
    
     /**
@@ -49,7 +57,7 @@ public class Game
     {
         Room outside, theater, libary, hall, cellar, castle,
         second_floor, path, dining_room, bedroom, stairs, piano_room,
-        basement, chamber,jail, kitchen, training_ground;
+        basement, chamber,jail, kitchen, training_ground,fight, end;
       
         // create the rooms
         outside = new Room("You stand before the intimidating dark castle. To the north is the castle gate, to the west is a training ground.");
@@ -65,8 +73,10 @@ public class Game
         stairs = new Room("it's getting darker and darker");
         piano_room = new Room("Nothing is in this room... just an old piano");
         basement = new Room ("This is the basement, it is a very dark place... soft sounds can be heard");
-        chamber = new Room("This is an underground chamber. There is a tressurechest in the middle, but a monster is protecting it. Want to fight it?");
-        jail = new Room("This is the jail. Just some skulls laying around the room");
+        chamber = new Room("This is an underground chamber. There is a treasure chest in the middle, but a monster is protecting it. Want to fight it?");
+        jail = new Room("This is the jail. Just some skulls lying around the room");
+        fight = new Room("Want to fight the dragon?"); //Moet eerst het zwaard gehaald hebben uit de bedroom.
+        end = new Room("You defeated the dragon and obtained the treasure");
         // initialise room exits
         outside.setExit("north", castle);
         outside.setExit("west", training_ground);
@@ -82,7 +92,7 @@ public class Game
         libary.setExit("north", dining_room);
         libary.setExit("east", castle);
         
-        dining_room.setExit("west", hall);
+        dining_room.setExit("east", hall);
         dining_room.setExit("south", kitchen);
         
         path.setExit("left", stairs);
@@ -93,6 +103,8 @@ public class Game
         basement.setExit("left", chamber);
         basement.setExit("right", jail); 
         
+        chamber.setExit("fight", fight );
+        
         
         second_floor.setExit("down", castle);
         second_floor.setExit("left", bedroom);
@@ -101,9 +113,14 @@ public class Game
         //Beginnen met documentatie bijhouden
 
         currentRoom = outside;  // start game outside
+        
+        //inventory.add(new Item("food", "",1));
+        //inventory.add(new Item("water", "",1));
     }
     
+   
     private void storeConvos()
+
     {
         Convo traininterest, traindisinterest;
         
@@ -150,6 +167,8 @@ public class Game
     {
         System.out.println();
         System.out.println("Welcome to the World of Zuul!");
+        System.out.println("Choose your language: " + "\n");
+        
         System.out.println("World of Zuul is a new adventure game.");
         System.out.println("Type 'start' if you'd like to start the game. Type 'help' for commands.");
         System.out.println();
@@ -164,7 +183,7 @@ public class Game
     private boolean processCommand(Command command) 
     {
         boolean wantToQuit = false;
-
+        
         if(command.isUnknown()) {
             System.out.println("I don't know what you mean...");
             return false;
@@ -190,6 +209,9 @@ public class Game
          else if (commandWord.equals("talk")) {
           System.out.println("Game has not started yet.");
          }
+         else if (commandWord.equals("inventory")){
+          System.out.println("Game has not started yet.");
+         }
         }
         else if(inConvo == false){
           if (commandWord.equals("go")) {
@@ -204,6 +226,9 @@ public class Game
           else if (commandWord.equals("start")) {
             System.out.println("Game has already started");  
           }
+          else if (commandWord.equals("inventory")){
+            printInventory();
+          }
         }
         else{
           if (commandWord.equals("go")) {
@@ -215,8 +240,14 @@ public class Game
           else if (commandWord.equals("look")) {
             System.out.println("Can't look while in conversation.");
           }
+          else if (commandWord.equals("inventory")){
+            System.out.println("Can't open inventory in conversation.");
+          }         
+        }       
+        /*else if (command.equals("take")){          
+            //take(); werkt nog niet
         }
-        // else command not recognised.
+        // else command not recognised. */
         return wantToQuit;
     }
 
@@ -264,7 +295,21 @@ public class Game
             System.out.println(currentRoom.getShortDescription());
         }
     }
-   
+    /**
+     * "printInventory prints out the inventory"
+     */
+    private void printInventory() {
+        if (inventory.size() == 0) {
+            System.out.println("you are not carrying anything");
+        } else {
+            System.out.print("You have the following:");
+            for (int n = 0; n < inventory.size(); n++) {
+                Item item = inventory.get(n);
+                System.out.print("\n" + " " + item.getIname() + "\n");
+            }
+            
+        }
+    }
     /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
@@ -278,7 +323,7 @@ public class Game
         }
         else {
             return true;  // signal that we want to quit
-        }
+        }                                                                                      
     }
     private void look()
     {
@@ -330,6 +375,17 @@ public class Game
                     currentRoom.setConvo("trainreturn");
                 }
             }
+        }
+    }
+    private void take(Room bedroom)
+    {   
+      
+      
+      if(currentRoom == bedroom){
+        System.out.println("You have obtained a sword!" + "\n");
+          System.out.println("The sword has been added to your inventory" + "\n");
+          inventory.add(new Item("sword", "sharp", 30));
+       
         }
     }
     

@@ -13,7 +13,7 @@ public class Item
  private String idescription;
  private int iweight;
  private String iname;
- private HashMap<String, Item> itemList;
+
  
  public Item(String iname, String idescription, int iweight)
  {   
@@ -21,15 +21,19 @@ public class Item
      this.iname = iname;
      this.idescription = idescription;
      this.iweight = iweight;
-     itemList = new HashMap<String, Item>();
      
-} 
-public String getIDescription()
-{
+     
+ } 
+ public String getIDescription()
+ {
     return idescription;
-}
-public int getIWeight()
-{
- return iweight;
-}
+ }
+ public int getIWeight()
+ {
+  return iweight;
+ }
+ public String getIname()
+ {
+    return iname;
+ }
 }

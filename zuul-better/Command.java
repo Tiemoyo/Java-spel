@@ -1,3 +1,4 @@
+import java.util.HashMap;
 /**
  * This class is part of the "World of Zuul" application. 
  * "World of Zuul" is a very simple, text based adventure game.  
@@ -21,7 +22,7 @@ public class Command
 {
     private String commandWord;
     private String secondWord;
-
+     private HashMap<lang, lang> command = new HashMap<lang, lang>();
     /**
      * Create a command object. First and second word must be supplied, but
      * either one (or both) can be null.
