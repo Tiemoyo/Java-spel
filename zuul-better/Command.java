@@ -22,7 +22,7 @@ public class Command
 {
     private String commandWord;
     private String secondWord;
-     private HashMap<lang, lang> command = new HashMap<lang, lang>();
+    
     /**
      * Create a command object. First and second word must be supplied, but
      * either one (or both) can be null.

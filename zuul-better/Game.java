@@ -1,5 +1,6 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+
+import java.util.*;
+
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -21,8 +22,11 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
+    private Room previousRoom;
+    private Stack<Room> roomStack;
     private boolean inConvo;
     private ArrayList<Item> inventory;
+   
     
     /**
      * Create the game and initialise its internal map.
@@ -65,9 +69,10 @@ public class Game
         end = new Room("You defeated the dragon and obtained the treasure");
         // initialise room exits
         outside.setExit("north", castle);
-        outside.setExit("east", outside);
+        outside.setExit("west", training_ground);
         
         training_ground.setExit("east", outside);
+        training_ground.setExit("south", castle);
         training_ground.setConvo("trainer");
         
         castle.setExit("left", hall);
@@ -134,14 +139,33 @@ public class Game
     {
         System.out.println();
         System.out.println("Welcome to the World of Zuul!");
-        System.out.println("Choose your language: " + "\n");
+        
         
         System.out.println("World of Zuul is a new adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
     }
-
+     private void enterRoom(Room nextRoom) {
+      previousRoom = currentRoom;
+      currentRoom = nextRoom;
+      System.out.println(currentRoom.getLongDescription());
+    }
+    private void goBack(Command command)
+    {
+        if(command.hasSecondWord()){
+         System.out.println("Back what?");
+                return;
+            }
+        if (previousRoom == null){
+                System.out.println("Sorry, cannot go back");
+                
+            }
+            else{
+                enterRoom(previousRoom);
+           
+            }
+        }
     /**
      * Given a command, process (that is: execute) the command.
      * @param command The command to be processed.
@@ -160,9 +184,7 @@ public class Game
         if (commandWord.equals("help")) {
             printHelp();
         }
-        else if (commandWord.equals("choose")){
-            goRoom(command);
-        }
+    
         else if (commandWord.equals("go")) {
             goRoom(command);
         }
@@ -181,6 +203,10 @@ public class Game
         else if (command.equals("take")){          
             //take(); werkt nog niet
         }
+        else if (commandWord.equals("back")){
+           goBack(command);
+        }
+      
         // else command not recognised.
         return wantToQuit;
     }
@@ -200,7 +226,6 @@ public class Game
         System.out.println("Your command words are:");
         parser.showCommands();
     }
-
     /** 
      * Try to in to one direction. If there is an exit, enter the new
      * room, otherwise print an error message.
@@ -220,12 +245,13 @@ public class Game
 
         if (nextRoom == null) {
             System.out.println("Can't go there.");
-        }
-        else {
+        } else {
+            previousRoom = currentRoom;
             currentRoom = nextRoom;
-            System.out.println(currentRoom.getShortDescription());
-        }
+      System.out.println(currentRoom.getLongDescription());
     }
+    }
+    
       /**
      * "printInventory prints out the inventory"
      */
