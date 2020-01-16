@@ -1,8 +1,8 @@
 #BlueJ class context
-comment0.target=Game
+comment0.target=lang
 comment0.text=\r\n\ \ This\ class\ is\ the\ main\ class\ of\ the\ "World\ of\ Zuul"\ application.\ \r\n\ \ "World\ of\ Zuul"\ is\ a\ very\ simple,\ text\ based\ adventure\ game.\ \ Users\ \r\n\ \ can\ walk\ around\ some\ scenery.\ That's\ all.\ It\ should\ really\ be\ extended\ \r\n\ \ to\ make\ it\ more\ interesting\!\r\n\ \r\n\ \ To\ play\ this\ game,\ create\ an\ instance\ of\ this\ class\ and\ call\ the\ "play"\r\n\ \ method.\r\n\ \r\n\ \ This\ main\ class\ creates\ and\ initialises\ all\ the\ others\:\ it\ creates\ all\r\n\ \ rooms,\ creates\ the\ parser\ and\ starts\ the\ game.\ \ It\ also\ evaluates\ and\r\n\ \ executes\ the\ commands\ that\ the\ parser\ returns.\r\n\ \r\n\ @author\ \ Michael\ K\u00F6lling\ and\ David\ J.\ Barnes\r\n\ @version\ 2016.02.29\r\n
 comment1.params=
-comment1.target=Game()
+comment1.target=lang()
 comment1.text=\r\n\ Create\ the\ game\ and\ initialise\ its\ internal\ map.\r\n
 comment10.params=command
 comment10.target=boolean\ quit(Command)

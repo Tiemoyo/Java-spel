@@ -7,4 +7,6 @@ comment2.params=
 comment2.target=java.lang.String\ getIDescription()
 comment3.params=
 comment3.target=int\ getIWeight()
-numComments=4
+comment4.params=
+comment4.target=java.lang.String\ getIname()
+numComments=5

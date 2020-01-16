@@ -1,5 +1,5 @@
 import java.util.Scanner;
-
+import java.util.HashMap;
 /**
  * This class is part of the "World of Zuul" application. 
  * "World of Zuul" is a very simple, text based adventure game.  
@@ -20,7 +20,7 @@ public class Parser
 {
     private CommandWords commands;  // holds all valid command words
     private Scanner reader;         // source of command input
-
+    private HashMap<CommandLang, CommandLang> command = new HashMap<CommandLang,CommandLang>();
     /**
      * Create a parser to read from the terminal window.
      */
