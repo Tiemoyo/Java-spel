@@ -17,6 +17,7 @@ public class Fight
     private int enemyHP;
     private int enemyDAM;
     private int turnNmbr;
+    private Player player;
 
     /**
      * Constructor for objects of class Fight
@@ -28,41 +29,113 @@ public class Fight
         turnNmbr = 0;
         randomGenerator = new Random();
     }
+
     public void lowRandomize()
     {
-        
+        // nothing yet
     }
+
     public void setEnemyHP(int hp)
     {
         enemyHP = hp;
     }
-    public void setEnemyDAM(int dam)
+
+    public void dealDamage(int hp)
+    {
+        enemyHP -= hp;
+    }
+
+    public void setEnemyDam(int dam)
     {
         enemyDAM = dam;
     }
+
     public void addTurn()
     {
         turnNmbr += 1;
     }
+
     public int getEnemyHP()
     {
         return enemyHP;
     }
-    public int getEnemyDAM()
+
+    public int getEnemyDam()
     {
         return enemyDAM;
     }
+
     public int getTurn()
     {
         return turnNmbr;
     }
-    public boolean hit()
+
+    public boolean enemyHitChance()
     {
         int hitchance = randomGenerator.nextInt(4);
-        boolean hit = true;
+        boolean hit;
         if(hitchance == 0){
             hit = false;
         }
+        else{
+            hit = true;
+        }
         return hit;
+    }
+    /*
+    public boolean playerHitChance()
+    {
+        boolean hit;
+        int ran = 3;
+        int dex = player.getDex();
+        ran += dex;
+        int hitchance = randomGenerator.nextInt(ran);
+        if(hitchance == 0){
+            hit = false;
+        }
+        else{
+            hit = true;
+        }
+        return hit;
+    }
+    */
+    public void startFight()
+    {
+
+    }
+
+    public String getAction(String action)
+    {
+        String youhit, youmiss, youwin, youlose, trainbegin, enemyhit, enemymiss;
+
+        youhit = "\nYou successfully hit the enemy!";
+        youmiss = "\nYou miss the enemy!";
+        youwin = "\nYou stand victorious!";
+        youlose = "\nYou are defeated..";
+        trainbegin = "\nThe old soldier prepares for battle!";
+        enemyhit = "\nThe enemy hits you!";
+        enemymiss = "\nThe enemy misses!.";
+
+        if(action == "youhit"){
+            return youhit;
+        }
+        else if(action == "youmiss"){
+            return youmiss;
+        }
+        else if(action == "youwin"){
+            return youmiss;
+        }
+        else if(action == "trainbegin"){
+            return trainbegin;
+        }
+        else if(action == "enemyhit"){
+            return enemyhit;
+        }
+        else if(action == "enemymiss"){
+            return enemymiss;
+        }
+        else{
+            return youlose;
+        }
     }
 }

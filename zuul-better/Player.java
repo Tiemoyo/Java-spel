@@ -1,4 +1,8 @@
-
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
 /**
  * Write a description of class Player here.
  *
@@ -20,6 +24,8 @@ public class Player
     private int xp;
     private int wpnDAM;
     private int armor;
+    
+    private Random randomGenerator;
 
     /**
      * Constructor for objects of class Player
@@ -38,9 +44,11 @@ public class Player
 
         armor = 0;
         wpnDAM = 0;
+        
+        randomGenerator = new Random();
     }
 
-    public int getHP()
+    public int getTotalHP()
     {
         int HP = baseHP;
         HP += endurance;
@@ -86,12 +94,31 @@ public class Player
     {
         return armor;
     }
+    
+    public int getDex()
+    {
+        return dexterity;
+    }
 
     public void setArmor(int value)
     {
         armor = value;
     }
 
+    public boolean hitChance()
+    {
+        boolean hit;
+        int ran = 3;
+        ran += dexterity;
+        int hitchance = randomGenerator.nextInt(ran);
+        if(hitchance == 0){
+            hit = false;
+        }
+        else{
+            hit = true;
+        }
+        return hit;
+    }
     public void lvlUp(String stat)
     {
         xp = 0;
