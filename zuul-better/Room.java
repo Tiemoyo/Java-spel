@@ -113,7 +113,8 @@ public class Room
     public void addItem(String iname, String idescription, int iweight)
     {   
        
-       Item item = new Item("sword", "sharp", 30);
+       Item sword = new Item("sword", "sharp", 30);
+       
     }
 
 
