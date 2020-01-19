@@ -25,6 +25,8 @@ public class Game
     private boolean gameStart;
     private Convo currentConvo;
     private ArrayList<Item> inventory;
+    private int currentHP;
+    private Player player;
     
     //The following are flags to ensure the conversation system works properly.
     private Convo trainerfirst;
@@ -45,6 +47,7 @@ public class Game
         gameStart = false;
         parser = new Parser();
         inventory = new ArrayList<Item>();
+        player = new Player();
         
         createRooms();
     
@@ -377,7 +380,7 @@ public class Game
             }
         }
     }
-    private void take(Room bedroom)
+    /*private void take(Room bedroom)
     {   
       
       
@@ -387,6 +390,6 @@ public class Game
           inventory.add(new Item("sword", "sharp", 30));
        
         }
-    }
+    }*/
     
 }

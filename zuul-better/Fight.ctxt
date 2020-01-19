@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=Fight
+comment0.text=\r\n\ Write\ a\ description\ of\ class\ Fight\ here.\r\n\r\n\ @author\ (your\ name)\r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment1.params=
+comment1.target=Fight()
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ Fight\r\n
+comment2.params=
+comment2.target=void\ lowRandomize()
+comment3.params=hp
+comment3.target=void\ setEnemyHP(int)
+comment4.params=dam
+comment4.target=void\ setEnemyDAM(int)
+comment5.params=
+comment5.target=void\ addTurn()
+comment6.params=
+comment6.target=int\ getEnemyHP()
+comment7.params=
+comment7.target=int\ getEnemyDAM()
+comment8.params=
+comment8.target=int\ getTurn()
+comment9.params=
+comment9.target=boolean\ hit()
+numComments=10
