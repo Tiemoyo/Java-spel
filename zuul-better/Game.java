@@ -26,8 +26,8 @@ public class Game
     private Stack<Room> roomStack;
     private boolean inConvo;
     private ArrayList<Item> inventory;
+    private Stack<Room> backStack;
    
-    
     /**
      * Create the game and initialise its internal map.
      */
@@ -36,7 +36,7 @@ public class Game
         parser = new Parser();
         inConvo = false;
         inventory = new ArrayList<Item>();
-        
+        backStack = new Stack<Room>();
         createRooms();
     }
    
@@ -45,12 +45,14 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, libary, hall, cellar, castle,
-        second_floor, path, dining_room, bedroom, stairs, piano_room,
-        basement, chamber,jail, kitchen, training_ground,fight, end;
+        Room language, outside,buiten, bibliotheek, libary, hall, hal, castle, kasteel,
+        second_floor, tweede_verdieping, path, pad, dining_room, eetkamer,slaapkamer, bedroom, stairs, piano_room,
+        basement,kelder, chamber, kerker,jail, gevangenis, kitchen, keuken, training_ground, oefenterrein,fight, vechten, einde, end
+        ,trappen, piano_kamer;
       
         // create the rooms
-        outside = new Room("You stand before the intimidating dark castle. To the north is the castle gate, to the west is a training ground.");
+         language = new Room("Type 'choose' + the language you wish to play the game in. You can choose between: ");
+        outside = new Room("You stand before the intimidating dark castle. To the north is the castle gate, to the west is a training ground.");       
         training_ground = new Room("You are in a training ground next to the castle. There is an old soldier tending to his equipment. Back to the east is the castle gate.");
         castle = new Room("You are in a dark castle, and there three paths to choose from...");
         libary = new Room("This is the old castle libary, most books are barely holding together");
@@ -67,7 +69,95 @@ public class Game
         jail = new Room("This is the jail. Just some skulls lying around the room");
         fight = new Room("Want to fight the dragon?"); //Moet eerst het zwaard gehaald hebben uit de bedroom.
         end = new Room("You defeated the dragon and obtained the treasure");
+        
+        
+        buiten = new Room("U staat voor een duister kasteel. In het noorden is de kasteelpoort, naar het westen is het oefenterrein.");
+
+        oefenterrein = new Room("U bent op het oefenterrein van het kasteel. Er is een oude soldaat die zijn uitrusting verzorgt. Terug naar het oosten is de kasteelpoort.");
+
+        kasteel = new Room("Je bevindt je in een donker kasteel en er zijn drie paden om uit te kiezen ...");
+
+        bibliotheek = new Room("Dit is de oude kasteelbibliotheek, de meeste boeken vallen bijna uit elkaar");
+
+        hal = new Room("Dit is de hal van het kasteel");
+
+        keuken = new Room("Je bent in de keuken. De geur hier is walgelijk");
+
+        tweede_verdieping = new Room("Er zijn hier meer kamers");
+
+        pad = new Room("Je bevindt je op een klein donker pad");
+
+        eetkamer = new Room("U bevindt zich in de eetkamer");
+
+        slaapkamer = new Room("Je bent in de slaapkamer van de oude koning en koningin, hier is misschien iets nuttigs");
+
+        trappen = new Room("Het wordt hier donkerder en donkerder");
+
+        piano_kamer = new Room("Er is niks in deze kamer... alleen een oude piano");
+
+        kelder = new Room ("Dit is de kelder, het is een zeer donkere plaats ... zachte geluiden zijn te horen");
+
+        kerker = new Room("Dit is een ondergrondse kamer. Er is een schatkist in het midden, maar een monster beschermt het. Wil je ertegen vechten?");
+
+        gevangenis = new Room("Dit is de gevangenis. Gewoon wat schedels die in de kamer liggen");
+
+        vechten = new Room("Wil je de draak bestrijden?"); //Moet eerst het zwaard gehaald hebben uit de bedroom.
+
+        einde = new Room("Je versloeg de draak en kreeg de schat");
+
         // initialise room exits
+         
+       language.setExit("English", outside);
+       language.setExit("Nederlands", buiten);
+        
+        buiten.setExit("noord", kasteel);
+        buiten.setExit("west", oefenterrein);
+       
+        oefenterrein.setExit("west", buiten);
+        oefenterrein.setConvo("trainer");
+        
+        kasteel.setExit("links", hal);
+        kasteel.setExit("rechts", bibliotheek);
+        kasteel.setExit("omhoog", tweede_verdieping);
+        kasteel.setExit("omlaag", pad);
+
+
+
+        bibliotheek.setExit("noord", eetkamer);
+        bibliotheek.setExit("west", kasteel);
+
+        
+
+        eetkamer.setExit("west", hal);
+        eetkamer.setExit("zuid", keuken);
+       
+        pad.setExit("links", trappen);
+        pad.setExit("rechts", piano_kamer);
+       
+        trappen.setExit("omlaag", kelder);
+        
+        kelder.setExit("links", chamber);
+        kelder.setExit("rechts", gevangenis);       
+
+        kerker.setExit("vechten", vechten);
+        
+        tweede_verdieping.setExit("omlaag", kasteel);
+        tweede_verdieping.setExit("links", slaapkamer);
+
+        
+
+        //09-01-2020 laatst veranderd.
+
+        //Beginnen met documentatie bijhouden
+
+        
+
+        
+        
+
+        // initialise room exits
+      
+        
         outside.setExit("north", castle);
         outside.setExit("west", training_ground);
         
@@ -95,25 +185,30 @@ public class Game
         basement.setExit("right", jail); 
         
         chamber.setExit("fight", fight );
-        
-        
+                
         second_floor.setExit("down", castle);
         second_floor.setExit("left", bedroom);
         
         //09-01-2020 laatst veranderd.
         //Beginnen met documentatie bijhouden
 
-        currentRoom = outside;  // start game outside
+        // start game outside
+        currentRoom = language; 
         
-        inventory.add(new Item("food", "",1));
-        inventory.add(new Item("water", "",1));
+        //items
+        
+        
+       
     }
-   
+
   public void storeConvos()
     {
         
     }
-
+  private void english()
+  {
+      
+ }
     /**
      *  Main play routine.  Loops until end of play.
      */
@@ -139,7 +234,7 @@ public class Game
     {
         System.out.println();
         System.out.println("Welcome to the World of Zuul!");
-        
+      
         
         System.out.println("World of Zuul is a new adventure game.");
         System.out.println("Type 'help' if you need help.");
@@ -174,40 +269,59 @@ public class Game
     private boolean processCommand(Command command) 
     {
         boolean wantToQuit = false;
-        
-        if(command.isUnknown()) {
-            System.out.println("I don't know what you mean...");
-            return false;
-        }
 
-        String commandWord = command.getCommandWord();
-        if (commandWord.equals("help")) {
-            printHelp();
-        }
+        CommandWord commandWord = command.getCommandWord();
+        switch (commandWord){
+       case UNKNOWN:
+       System.out.println("I don't know what you mean...");
+       break;
     
-        else if (commandWord.equals("go")) {
-            goRoom(command);
-        }
-        else if (commandWord.equals("look")) {
-            look();
-        }
-        else if (commandWord.equals("quit")) {
-            wantToQuit = quit(command);
-        }
-        else if (commandWord.equals("talk")) {
-            talk();
-        }
-        else if (commandWord.equals("inventory")){
-           printInventory();
-        }
-        else if (command.equals("take")){          
-            //take(); werkt nog niet
-        }
-        else if (commandWord.equals("back")){
-           goBack(command);
-        }
-      
-        // else command not recognised.
+       case HELP: 
+       printHelp();
+       break;
+        
+        
+       case QUIT:
+       wantToQuit = quit(command);
+       break;
+        
+       case TALK:
+       talk();
+       break;
+        
+        
+       case INVENTORY:
+       printInventory();
+       break;
+        
+        case TAKE:
+       take();
+        break;
+            
+       case BACK:
+       goBack(command);
+       break;
+       
+       case LOOK:
+       look();
+       break;
+       
+       case GO:
+       goRoom(command);
+       break;
+       
+       case CHOOSE:
+       goRoom(command);
+       break;
+       
+       case GA:
+       goRoom(command);
+       break;
+       
+       case TAS:
+       printTas();
+       break;
+    } 
         return wantToQuit;
     }
 
@@ -267,6 +381,21 @@ public class Game
             
         }
     }
+      /**
+     * "printInventory prints out the inventory"
+     */
+    private void printTas() {
+        if (inventory.size() == 0) {
+            System.out.println("U hebt momenteel niks bij je");
+        } else {
+            System.out.print("U hebt de volgende spullen bij je:");
+            for (int n = 0; n < inventory.size(); n++) {
+                Item item = inventory.get(n);
+                System.out.print("\n" + " " + item.getIname() + "\n");
+            }
+            
+        }
+    }
     /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
@@ -295,16 +424,31 @@ public class Game
             inConvo = true;
         }
     }
-    private void take(Room bedroom)
+    private void take()
     {   
-      
-      
-      if(currentRoom == bedroom){
-        System.out.println("You have obtained a sword!" + "\n");
-          System.out.println("The sword has been added to your inventory" + "\n");
-          inventory.add(new Item("sword", "sharp", 30));
+    Room bedroom;
+    bedroom = new Room("You are in the bedroom of the old king and queen, there might be something useful here");
+    if(currentRoom.equals(bedroom)){
+    bedroom.addItem("sword","sharp",30); 
+   
+         System.out.println("You have obtained a sword!" + "\n"); 
+        
+        inventory.add(new Item("sword", "sharp", 30));
        
-        }
-    }
+   
+ } else{
+     System.out.println("There's no item here");
+}
+}
+private void fight()
+{
+    Room chamber;
+   //Volgens mij hebben we de player klasse nodig voordat je een item kan gebruiken
+    //if(printInventory().contains("sword")){
+        System.out.print("You are ready to take on the dragon");
+   // } else{
+    System.out.println("You might need an item first to fight");
     
 }
+}
+
