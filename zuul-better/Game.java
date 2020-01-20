@@ -57,10 +57,6 @@ public class Game
         fight = new Fight();
 
         createRooms();
-
-        Item stick = new Item("Stick", "A sturdy wooden tree branch", "Weapon");
-        stick.setDam(1);
-        inventory.put(stick.getName(), stick);
     }
 
     /**
@@ -70,12 +66,16 @@ public class Game
     {
         Room outside, training_ground;
 
+        Item stick = new Item("Stick", "A sturdy wooden tree branch", "Weapon");
+        stick.setDam(1);
+
         // create the rooms
         outside = new Room("You stand before the intimidating dark castle. To the north is the castle gate, to the west is a training ground.");
         training_ground = new Room("You are in a training ground next to the castle. There is an old soldier tending to his equipment. Back to the east is the castle gate.");
 
         // initialise room exits
         outside.setExit("west", training_ground);
+        outside.addItem("Stick", stick);
 
         training_ground.setExit("east", outside);
         training_ground.setConvo("trainerfirst");
@@ -164,48 +164,24 @@ public class Game
             if(commandWord.equals("start")){
                 start();
             }
-            else if (commandWord.equals("go")) {
-                System.out.println("Game has not started yet.");
-            }
-            else if (commandWord.equals("look")) {
-                System.out.println("Game has not started yet.");
-            }
-            else if (commandWord.equals("talk")) {
-                System.out.println("Game has not started yet.");
-            }
-            else if (commandWord.equals("inventory")){
-                System.out.println("Game has not started yet.");
-            }
-            else if (commandWord.equals("attack")){
+            else{
                 System.out.println("Game has not started yet.");
             }
         }
         else if(inConvo == true){
-            if (commandWord.equals("go")) {
-                System.out.println("Can't move while in conversation.");
-            }
-            else if (commandWord.equals("talk")) {
+            if (commandWord.equals("talk")) {
                 talk(command);
             }
-            else if (commandWord.equals("look")) {
-                System.out.println("Can't look while in conversation.");
-            }
-            else if (commandWord.equals("inventory")){
-                System.out.println("Can't open inventory in conversation.");
-            }
-            else if (commandWord.equals("attack")){
-                System.out.println("Can't attack in conversation.");
+            else{
+                System.out.println("Can't do that while in conversation.");
             }
         }
         else if(inFight == true){
             if(commandWord.equals("attack")){
                 attack();
             }
-            else if (commandWord.equals("go")) {
-                System.out.println("Can't move while in fight.");
-            }
-            else if (commandWord.equals("look")) {
-                System.out.println("Can't look while in fight.");
+            else{
+                System.out.println("Can't do that while fighting.");
             }
         }
         else{          
@@ -229,6 +205,9 @@ public class Game
             }
             else if (commandWord.equals("equip")) {
                 equipItem(command);
+            }
+            else if (commandWord.equals("take")) {
+                take(command);
             }
         }       
         /*else if (command.equals("take")){          
@@ -295,7 +274,13 @@ public class Game
             System.out.print("You have the following:");
             for (String i : inventory.keySet()) {
                 Item item = inventory.get(i);
-                System.out.print("\n" + item.getName() + "\n");
+                System.out.print("\n" + item.getName());
+                if(item.getEquip() == true){
+                    System.out.print(" [Equipped]\n");
+                }
+                else{
+                    System.out.print("\n");
+                }
             }
         }
     }
@@ -309,7 +294,7 @@ public class Game
 
         String gItem = command.getSecondWord();
         if(inventory.get(gItem) == null){
-            System.out.println("You don't have that item");
+            System.out.println("You don't have that item.");
             return;
         }      
         Item item = inventory.get(gItem);
@@ -370,7 +355,8 @@ public class Game
 
     private void look()
     {
-        System.out.println(currentRoom.getLongDescription());
+        System.out.println(currentRoom.getShortDescription());
+        System.out.println(currentRoom.getItems());
     }
 
     private void talk(Command command)
@@ -458,15 +444,33 @@ public class Game
             }
         }
     }
-    /*private void take(Room bedroom)
+
+    private void take(Command command)
     {   
-
-    if(currentRoom == bedroom){
-    System.out.println("You have obtained a sword!" + "\n");
-    System.out.println("The sword has been added to your inventory" + "\n");
-    inventory.add(new Item("sword", "sharp", 30));
-
+        if(currentRoom.items.size() < 1){
+            System.out.println("No items here.");
+        }
+        else{
+            if(!command.hasSecondWord()){
+                for (String i : currentRoom.items.keySet()) {                    
+                    Item item = currentRoom.items.get(i);
+                    inventory.put(item.getName(), item);
+                }
+                currentRoom.items.clear();
+                System.out.println("All items taken.");
+            }
+            else{
+                String gItem = command.getSecondWord();
+                if(currentRoom.items.get(gItem) != null){
+                    Item item = currentRoom.items.get(gItem);
+                    inventory.put(gItem, item);
+                    currentRoom.items.remove(gItem);
+                    System.out.println("You have taken the " + item.getName() + ".");
+                }
+                else{
+                    System.out.println("No " + gItem + " here.");
+                }
+            }
+        }
     }
-    }*/
-
 }

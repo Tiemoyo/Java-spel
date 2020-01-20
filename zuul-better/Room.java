@@ -21,7 +21,7 @@ public class Room
 {
     private String description;
     private HashMap<String, Room> exits;// stores exits of this room.
-    private ArrayList<Item> items;
+    public HashMap<String, Item> items;
     private boolean hasConvo;
     private String convotype;
 
@@ -35,7 +35,7 @@ public class Room
     {
         this.description = description;
         exits = new HashMap<String, Room>();
-        items = new ArrayList<Item>();
+        items = new HashMap<String, Item>();
         hasConvo = false;
     }
 
@@ -48,15 +48,25 @@ public class Room
     {
         exits.put(direction, neighbor);
     }
-    
-    public void addItem(Item item)
+
+    public void addItem(String string, Item item)
     {
-        items.add(item);
+        items.put(string, item);
     }
-    
-    public void getItems()
+
+    public String getItems()
     {
-        
+        if (items.size() == 0) {
+            return "There are no items here.";    
+        }
+        else{
+            String string = "The following items are here:";
+            for (String i : items.keySet()) {
+                Item item = items.get(i);
+                string += "\n" + item.getName();
+            }
+            return string;
+        }
     }
 
     /**
@@ -92,7 +102,6 @@ public class Room
     public String getLongDescription()
     { 
         return description + getExitString();
-
     } 
 
     /** nh
