@@ -25,7 +25,9 @@ public class Game
     private boolean gameStart;
     private boolean inFight;
     private Convo currentConvo;
-    private ArrayList<Item> inventory;
+    private HashMap<String, Item> inventory;
+    private HashMap<String, Item> equipment;
+
     private int currentHP;
     private Player player;
     private Fight fight;
@@ -48,13 +50,17 @@ public class Game
         gameStart = false;
         inFight = false;
         parser = new Parser();
-        inventory = new ArrayList<Item>();
+        inventory = new HashMap<String, Item>();
+        equipment = new HashMap<String, Item>();
         player = new Player();
         currentHP = player.getTotalHP();
         fight = new Fight();
 
         createRooms();
 
+        Item stick = new Item("Stick", "A sturdy wooden tree branch", "Weapon");
+        stick.setDam(1);
+        inventory.put(stick.getName(), stick);
     }
 
     /**
@@ -62,68 +68,19 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, libary, hall, cellar, castle,
-        second_floor, path, dining_room, bedroom, stairs, piano_room,
-        basement, chamber,jail, kitchen, training_ground,fight, end;
+        Room outside, training_ground;
 
         // create the rooms
         outside = new Room("You stand before the intimidating dark castle. To the north is the castle gate, to the west is a training ground.");
         training_ground = new Room("You are in a training ground next to the castle. There is an old soldier tending to his equipment. Back to the east is the castle gate.");
-        /*
-        castle = new Room("You are in a dark castle, and there three paths to choose from...");
-        libary = new Room("This is the old castle libary, most books are barely holding together");
-        hall = new Room("This is the hall of the castle");
-        kitchen = new Room("You are in the kitchen. The smell here is disgusting");
-        second_floor = new Room("There are more rooms here");
-        path = new Room("You are in a small dark path");
-        dining_room = new Room("You are in the dining room");
-        bedroom = new Room("You are in the bedroom of the old king and queen, there might be something useful here");
-        stairs = new Room("it's getting darker and darker");
-        piano_room = new Room("Nothing is in this room... just an old piano");
-        basement = new Room ("This is the basement, it is a very dark place... soft sounds can be heard");
-        chamber = new Room("This is an underground chamber. There is a treasure chest in the middle, but a monster is protecting it. Want to fight it?");
-        jail = new Room("This is the jail. Just some skulls lying around the room");
-        fight = new Room("Want to fight the dragon?"); //Moet eerst het zwaard gehaald hebben uit de bedroom.
-        end = new Room("You defeated the dragon and obtained the treasure");
-         */
+
         // initialise room exits
-        //outside.setExit("north", castle);
         outside.setExit("west", training_ground);
 
         training_ground.setExit("east", outside);
         training_ground.setConvo("trainerfirst");
-        /*
-        castle.setExit("left", hall);
-        castle.setExit("right", libary);
-        castle.setExit("up", second_floor);
-        castle.setExit("down", path);
 
-        libary.setExit("north", dining_room);
-        libary.setExit("east", castle);
-
-        dining_room.setExit("east", hall);
-        dining_room.setExit("south", kitchen);
-
-        path.setExit("left", stairs);
-        path.setExit("right", piano_room);
-
-        stairs.setExit("down", basement);
-
-        basement.setExit("left", chamber);
-        basement.setExit("right", jail); 
-
-        chamber.setExit("fight", fight );
-
-        second_floor.setExit("down", castle);
-        second_floor.setExit("left", bedroom);
-         */
-        //09-01-2020 laatst veranderd.
-        //Beginnen met documentatie bijhouden
-
-        currentRoom = outside;  // start game outside
-
-        //inventory.add(new Item("food", "",1));
-        //inventory.add(new Item("water", "",1));
+        currentRoom = outside;  // start game outside     
     }    
 
     private void storeConvos()
@@ -270,6 +227,9 @@ public class Game
             else if (commandWord.equals("attack")) {
                 System.out.println("Not in battle.");  
             }
+            else if (commandWord.equals("equip")) {
+                equipItem(command);
+            }
         }       
         /*else if (command.equals("take")){          
         //take(); werkt nog niet
@@ -330,13 +290,65 @@ public class Game
     private void printInventory() {
         if (inventory.size() == 0) {
             System.out.println("you are not carrying anything");
-        } else {
+        }
+        else {
             System.out.print("You have the following:");
-            for (int n = 0; n < inventory.size(); n++) {
-                Item item = inventory.get(n);
-                System.out.print("\n" + " " + item.getIname() + "\n");
+            for (String i : inventory.keySet()) {
+                Item item = inventory.get(i);
+                System.out.print("\n" + item.getName() + "\n");
             }
+        }
+    }
 
+    private void equipItem(Command command)
+    {
+        if(!command.hasSecondWord()) {          
+            System.out.println("Equip what?");
+            return;
+        }
+
+        String gItem = command.getSecondWord();
+        if(inventory.get(gItem) == null){
+            System.out.println("You don't have that item");
+            return;
+        }      
+        Item item = inventory.get(gItem);
+
+        if(item.getType() == "Weapon"){
+            if(equipment.get("Weapon") == null){
+                equipment.put("Weapon", item);
+                player.setWpnDamage(item.getDam());
+                item.equipIt();
+                System.out.println("You have equipped " + item.getName() + ".");
+            }
+            else{
+                System.out.println("You already have a weapon equipped.");
+            }
+        }
+        else if(item.getType() == "Armor"){
+            if(equipment.get("Armor") == null){
+                equipment.put("Armor", item);
+                player.setArmor(item.getArmor());
+                item.equipIt();
+                System.out.println("You have equipped " + item.getName() + ".");
+            }
+            else{
+                System.out.println("You already have armor equipped.");
+            }
+        }
+        else if(item.getType() == "Shield"){
+            if(equipment.get("Shield") == null){
+                equipment.put("Shield", item);
+                player.setShield(item.getShield());
+                item.equipIt();
+                System.out.println("You have equipped " + item.getName() + ".");
+            }
+            else{
+                System.out.println("You already have a shield equipped.");
+            }
+        }
+        else{
+            System.out.println("Can't equip this item.");
         }
     }
 

@@ -1,6 +1,7 @@
 import java.util.Set;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * Class Room - a room in an adventure game.
@@ -20,9 +21,10 @@ public class Room
 {
     private String description;
     private HashMap<String, Room> exits;// stores exits of this room.
+    private ArrayList<Item> items;
     private boolean hasConvo;
     private String convotype;
-     
+
     /**
      * Create a room described "description". Initially, it has
      * no exits. "description" is something like "a kitchen" or
@@ -32,15 +34,11 @@ public class Room
     public Room(String description) 
     {
         this.description = description;
-       
         exits = new HashMap<String, Room>();
+        items = new ArrayList<Item>();
         hasConvo = false;
-   
-      
-        
-        
-     }
-    
+    }
+
     /**
      * Define an exit from this room.
      * @param direction The direction of the exit.
@@ -49,6 +47,16 @@ public class Room
     public void setExit(String direction, Room neighbor) 
     {
         exits.put(direction, neighbor);
+    }
+    
+    public void addItem(Item item)
+    {
+        items.add(item);
+    }
+    
+    public void getItems()
+    {
+        
     }
 
     /**
@@ -59,7 +67,7 @@ public class Room
     {
         return description;
     }
-      
+
     /**
      * Return a string describing the room's exits, for example
      * "Exits: north west".
@@ -74,7 +82,7 @@ public class Room
         }
         return returnString;
     }
-   
+
     /**
      * Return a description of the room in the form:
      *     You are in the kitchen.
@@ -83,9 +91,10 @@ public class Room
      */
     public String getLongDescription()
     { 
-       return description + getExitString();
-    
+        return description + getExitString();
+
     } 
+
     /** nh
      * Return the room that is reached if we go from this room in direction
      * "direction". If there is no room in that direction, return null.
@@ -95,26 +104,21 @@ public class Room
     public Room getExit(String direction) 
     {
         return exits.get(direction);
-    
     }
+
     public boolean getConvo()
     {
         return hasConvo;
     }
+
     public String getConvoType()
     {
         return convotype;
     }
+
     public void setConvo(String type)
     {
         hasConvo = true;
         convotype = type;
     }
-    public void addItem(String iname, String idescription, int iweight)
-    {   
-       
-       Item item = new Item("sword", "sharp", 30);
-    }
-
-
 }

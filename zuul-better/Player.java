@@ -24,6 +24,7 @@ public class Player
     private int xp;
     private int wpnDAM;
     private int armor;
+    private int shield;
     
     private Random randomGenerator;
 
@@ -44,6 +45,7 @@ public class Player
 
         armor = 0;
         wpnDAM = 0;
+        shield = 0;
         
         randomGenerator = new Random();
     }
@@ -75,6 +77,11 @@ public class Player
         return wpnDAM;
     }
     
+    public int getShield()
+    {
+        return shield;
+    }
+    
     public void setWpnDamage(int dam)
     {
         wpnDAM = dam;
@@ -103,6 +110,11 @@ public class Player
     public void setArmor(int value)
     {
         armor = value;
+    }
+    
+    public void setShield(int value)
+    {
+        shield = value;
     }
 
     public boolean hitChance()
