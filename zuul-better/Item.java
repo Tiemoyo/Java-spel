@@ -39,6 +39,11 @@ public class Item
         isEquipped = true;
     }
     
+    public void unEquipIt()
+    {
+        isEquipped = false;
+    }
+    
     public boolean getEquip()
     {
         return isEquipped;

@@ -15,6 +15,7 @@ public class Fight
     // instance variables - replace the example below with your own
     private Random randomGenerator;
     private int enemyHP;
+    private int xpGain;
     private int enemyDAM;
     private int turnNmbr;
     private Player player;
@@ -27,6 +28,7 @@ public class Fight
         enemyHP = 0;
         enemyDAM = 0;
         turnNmbr = 0;
+        xpGain = 0;
         randomGenerator = new Random();
     }
 
@@ -38,6 +40,11 @@ public class Fight
     public void setEnemyHP(int hp)
     {
         enemyHP = hp;
+    }
+    
+    public void setXPGain(int xp)
+    {
+        xpGain = xp;
     }
 
     public void dealDamage(int hp)
@@ -59,6 +66,12 @@ public class Fight
     {
         return enemyHP;
     }
+    
+    public int getXPGain()
+    {
+        xpGain += turnNmbr;
+        return xpGain;
+    }
 
     public int getEnemyDam()
     {
@@ -68,6 +81,11 @@ public class Fight
     public int getTurn()
     {
         return turnNmbr;
+    }
+    
+    public void resetTurn()
+    {
+        turnNmbr = 0;
     }
 
     public boolean enemyHitChance()
@@ -123,7 +141,7 @@ public class Fight
             return youmiss;
         }
         else if(action == "youwin"){
-            return youmiss;
+            return youwin;
         }
         else if(action == "trainbegin"){
             return trainbegin;

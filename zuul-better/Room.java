@@ -130,4 +130,9 @@ public class Room
         hasConvo = true;
         convotype = type;
     }
+    
+    public void unsetConvo()
+    {
+        hasConvo = false;
+    }
 }

@@ -27,6 +27,7 @@ public class Game
     private Convo currentConvo;
     private HashMap<String, Item> inventory;
     private HashMap<String, Item> equipment;
+    private ArrayList<Room> roomhistory;
 
     private int currentHP;
     private Player player;
@@ -37,6 +38,7 @@ public class Game
     private Convo trainaccept;
     private Convo trainrefuse;
     private Convo trainreturn;
+    private Convo trainwin;
 
     /**
      * Create the game and initialise its internal map.
@@ -52,6 +54,7 @@ public class Game
         parser = new Parser();
         inventory = new HashMap<String, Item>();
         equipment = new HashMap<String, Item>();
+        roomhistory = new ArrayList<Room>();
         player = new Player();
         currentHP = player.getTotalHP();
         fight = new Fight();
@@ -92,9 +95,10 @@ public class Game
         trainerfirst = new Convo("You greet the soldier.\n'Hello there, lad. You seem like you could use a bit of training, especially if you're thinkin' of heading into the castle'\nA. Declare your interest.\nB. You're not interested.");
         traininterest = new Convo("'Good thinkin' lad. To tell ya truth I'm a bit rusty, so how about we spar? If ya win, I'll give ya one of my spare swords.'\nA. Accept.\nB. Refuse.");
         traindisinterest = new Convo("'Confident, are ya? Listen here, if yer able to beat me one-on-one, you can win one of my swords'\nA. Accept.\nB. Refuse.");
-        trainaccept = new Convo("'Alright, let's see what you're made of.' This is in progress, so the conversation ends here.");
+        trainaccept = new Convo("'Alright, let's see what you're made of!'");
         trainrefuse = new Convo("'It's your loss.' The soldier returns his attention to his equipment ending the conversation.");
         trainreturn = new Convo("'Ah, you return! Want to give it another go?'\nYes.\nNo.");
+        trainwin = new Convo("'Congratulations, you're pretty good. As promised, one of my spare swords. Put it to good use.'\nYou take the sword.");
 
         trainerfirst.setLink("a", traininterest);
         trainerfirst.setLink("b", traindisinterest);
@@ -147,21 +151,20 @@ public class Game
     private boolean processCommand(Command command) 
     {
         boolean wantToQuit = false;
+        CommandWord commandWord = command.getCommandWord();
 
-        if(command.isUnknown()) {
+        if(commandWord == CommandWord.UNKNOWN) {
             System.out.println("I don't know what you mean...");
             return false;
-        }
-
-        String commandWord = command.getCommandWord();
-        if (commandWord.equals("help")) {
+        }        
+        else if (commandWord == CommandWord.HELP) {
             printHelp();
         }
-        else if (commandWord.equals("quit")) {
+        else if (commandWord == CommandWord.QUIT) {
             wantToQuit = quit(command);
         }
         else if(gameStart == false){
-            if(commandWord.equals("start")){
+            if(commandWord == CommandWord.START){
                 start();
             }
             else{
@@ -169,7 +172,7 @@ public class Game
             }
         }
         else if(inConvo == true){
-            if (commandWord.equals("talk")) {
+            if (commandWord == CommandWord.TALK) {
                 talk(command);
             }
             else{
@@ -177,43 +180,43 @@ public class Game
             }
         }
         else if(inFight == true){
-            if(commandWord.equals("attack")){
+            if(commandWord == CommandWord.ATT){
                 attack();
+            }
+            else if (commandWord == CommandWord.INV){
+                printInventory();
             }
             else{
                 System.out.println("Can't do that while fighting.");
             }
         }
         else{          
-            if (commandWord.equals("go")) {
+            if (commandWord == CommandWord.GO) {
                 goRoom(command);
             }
-            else if (commandWord.equals("look")) {
+            else if (commandWord == CommandWord.LOOK) {
                 look();
             }
-            else if (commandWord.equals("talk")) {
+            else if (commandWord == CommandWord.TALK) {
                 talk(command);
             }
-            else if (commandWord.equals("start")) {
+            else if (commandWord == CommandWord.START) {
                 System.out.println("Game has already started");  
             }
-            else if (commandWord.equals("inventory")){
+            else if (commandWord == CommandWord.INV){
                 printInventory();
             }
-            else if (commandWord.equals("attack")) {
+            else if (commandWord == CommandWord.ATT) {
                 System.out.println("Not in battle.");  
             }
-            else if (commandWord.equals("equip")) {
+            else if (commandWord == CommandWord.EQP) {
                 equipItem(command);
             }
-            else if (commandWord.equals("take")) {
+            else if (commandWord == CommandWord.TAKE) {
                 take(command);
             }
-        }       
-        /*else if (command.equals("take")){          
-        //take(); werkt nog niet
         }
-        // else command not recognised. */
+
         return wantToQuit;
     }
 
@@ -268,19 +271,17 @@ public class Game
      */
     private void printInventory() {
         if (inventory.size() == 0) {
-            System.out.println("you are not carrying anything");
+            System.out.println("You are not carrying anything.");
         }
         else {
-            System.out.print("You have the following:");
+            System.out.println("You have the following:");
             for (String i : inventory.keySet()) {
                 Item item = inventory.get(i);
-                System.out.print("\n" + item.getName());
+                System.out.print(item.getName());
                 if(item.getEquip() == true){
-                    System.out.print(" [Equipped]\n");
+                    System.out.print(" [Equipped]");
                 }
-                else{
-                    System.out.print("\n");
-                }
+                System.out.print("\n");
             }
         }
     }
@@ -307,7 +308,13 @@ public class Game
                 System.out.println("You have equipped " + item.getName() + ".");
             }
             else{
-                System.out.println("You already have a weapon equipped.");
+                Item equip = equipment.get("Weapon");
+                equip.unEquipIt();
+                equipment.remove("Weapon");
+                equipment.put("Weapon", item);
+                player.setWpnDamage(item.getDam());
+                item.equipIt();
+                System.out.println("Unequipped " + equip.getName() + " and equipped " + item.getName() + ".");
             }
         }
         else if(item.getType() == "Armor"){
@@ -318,7 +325,13 @@ public class Game
                 System.out.println("You have equipped " + item.getName() + ".");
             }
             else{
-                System.out.println("You already have armor equipped.");
+                Item equip = equipment.get("Armor");
+                equip.unEquipIt();
+                equipment.remove("Armor");
+                equipment.put("Armor", item);
+                player.setWpnDamage(item.getDam());
+                item.equipIt();
+                System.out.println("Unequipped " + equip.getName() + " and equipped " + item.getName() + ".");
             }
         }
         else if(item.getType() == "Shield"){
@@ -329,7 +342,13 @@ public class Game
                 System.out.println("You have equipped " + item.getName() + ".");
             }
             else{
-                System.out.println("You already have a shield equipped.");
+                Item equip = equipment.get("Shield");
+                equip.unEquipIt();
+                equipment.remove("Shield");
+                equipment.put("Shield", item);
+                player.setWpnDamage(item.getDam());
+                item.equipIt();
+                System.out.println("Unequipped " + equip.getName() + " and equipped " + item.getName() + ".");
             }
         }
         else{
@@ -400,6 +419,7 @@ public class Game
                     inFight = true;
                     fight.setEnemyHP(5);
                     fight.setEnemyDam(1);
+                    fight.setXPGain(3);
                     System.out.println(fight.getAction("trainbegin"));
                 }
                 else if(currentConvo == trainrefuse){
@@ -417,31 +437,68 @@ public class Game
         if(playerhits == true){
             fight.dealDamage(player.getDamage());
             System.out.println(fight.getAction("youhit"));
-            System.out.println(" You dealt " + player.getDamage() + " damage.");
+            System.out.println("You dealt " + player.getDamage() + " damage.");
+            fight.addTurn();
             if(fight.getEnemyHP() < 1){
-                inFight = false;
-                System.out.println(fight.getAction("youwin"));
-                System.out.println(currentRoom.getShortDescription());
+                winFight();
+                return;
             }
         }
         else{
             System.out.println(fight.getAction("youmiss"));
+            fight.addTurn();
         }
-        if(inFight = true){
-            boolean enemyhits = fight.enemyHitChance();
-            if(enemyhits == true){
-                currentHP -= fight.getEnemyDam();
-                System.out.println(fight.getAction("enemyhit"));
-                System.out.println("Enemy dealt " + fight.getEnemyDam() + " damage.");
-                if(currentHP < 1){
-                    inFight = false;
-                    System.out.println(fight.getAction("youlose"));
-                    System.out.println(currentRoom.getShortDescription());
-                }
+        boolean enemyhits = fight.enemyHitChance();
+        if(enemyhits == true){
+            currentHP -= fight.getEnemyDam();
+            System.out.println(fight.getAction("enemyhit"));
+            System.out.println("Enemy dealt " + fight.getEnemyDam() + " damage.");
+            if(currentHP < 1){
+                loseFight();
+                return;
             }
-            else{
-                System.out.println(fight.getAction("enemymiss"));
-            }
+        }
+        else{
+            System.out.println(fight.getAction("enemymiss"));
+        }
+
+    }
+
+    private void winFight()
+    {
+        System.out.println(fight.getAction("youwin"));
+        player.addXP(fight.getXPGain());
+        System.out.println("You gained " + fight.getXPGain() + " XP!");
+        if(player.lvlCheck() == true){
+            player.lvlUp();
+        }
+        inFight = false;
+        fight.resetTurn();
+        if(currentRoom.getConvoType() == "trainreturn"){
+            Item oldsword = new Item("Shortsword", "A shortsword that's clearly seen a lot of use, though it seems it was well-maintained.\n+2 to damage.", "Weapon");
+            oldsword.setDam(2);
+            System.out.println(trainwin.getContent());
+            inventory.put("Shortsword", oldsword);
+            currentRoom.unsetConvo();
+            System.out.println(currentRoom.getShortDescription());
+        }
+    }
+
+    private void loseFight()
+    {
+        System.out.println(fight.getAction("youlose"));
+        inFight = false;
+        fight.resetTurn();
+        if(currentRoom.getConvoType() == "trainreturn"){
+            System.out.println("'Seems like a win for me! Come back if you're feeling like giving it another go though.'");
+            System.out.println("Your health was restored.");
+            currentHP = player.getTotalHP();
+            System.out.println(currentRoom.getShortDescription());
+        }
+        else{
+            System.out.println("You have died.\nGAME OVER");
+            Command quit = new Command(CommandWord.QUIT , null);
+            processCommand(quit);
         }
     }
 
