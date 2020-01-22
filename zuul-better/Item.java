@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
@@ -10,30 +8,20 @@ import java.util.HashMap;
  */
 public class Item
 {
- private String idescription;
- private int iweight;
- private String iname;
+ private String description;
 
  
- public Item(String iname, String idescription, int iweight)
+ public Item(String newdescription)
  {   
-     //initializing the item name, description and weight
-     this.iname = iname;
-     this.idescription = idescription;
-     this.iweight = iweight;
+     
+     description = newdescription;
+     
+     
      
      
 } 
-public String getIDescription()
+public String getDescription()
 {
-    return idescription;
-}
-public int getIWeight()
-{
- return iweight;
-}
-public String getIname()
-{
-    return iname;
+    return description;
 }
 }

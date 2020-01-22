@@ -1,6 +1,7 @@
 import java.util.Set;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ArrayList;
+
 
 /**
  * Class Room - a room in an adventure game.
@@ -22,7 +23,7 @@ public class Room
     private HashMap<String, Room> exits;// stores exits of this room.
     private boolean hasConvo;
     private String convotype;
-     
+    private ArrayList<Item> items = new ArrayList<Item>();
     /**
      * Create a room described "description". Initially, it has
      * no exits. "description" is something like "a kitchen" or
@@ -32,10 +33,9 @@ public class Room
     public Room(String description) 
     {
         this.description = description;
-       
         exits = new HashMap<String, Room>();
         hasConvo = false;
-   
+        
       
         
         
@@ -67,11 +67,15 @@ public class Room
      */
     private String getExitString()
     {
-        String returnString = "\n" + "Exits:";
+        String returnString = "\n" + "Exits:" + "\n";
         Set<String> keys = exits.keySet();
         for(String exit : keys) {
             returnString += " " + exit;
+            returnString += "\nItems in the room:\n";
+            returnString += getRoomItems();
         }
+        
+        
         return returnString;
     }
    
@@ -110,12 +114,51 @@ public class Room
         hasConvo = true;
         convotype = type;
     }
-    public void addItem(String iname, String idescription, int iweight)
-    {   
-       
-       Item sword = new Item("sword", "sharp", 30);
-       
+ /*   
+  *   Get item from the room
+   */
+  public Item getItem(int index){
+    return items.get(index);
+}
+ /*   
+  *   Set an item in the room
+   */
+public void setItem(Item newitem){
+    items.add(newitem);
+}
+ /*   
+  *   Get a description of the items in the room
+   */
+public String getRoomItems()
+{                  
+       String output = "";
+       for(int i =0; i < items.size(); i++){
+           output += items.get(i).getDescription() + " ";
     }
-
-
+   return output;
+}
+ /*   
+  *   Get item from the room
+   */
+  public Item getItem(String itemName){
+      
+      for (int i = 0; i < items.size(); i++){
+          if (items.get(i).getDescription().equals(itemName)){{
+              return items.get(i);
+            }
+        }
+        
+    }
+        return null;
+    }
+    public void removeItem(String itemName){
+      
+      for (int i = 0; i < items.size(); i++){
+          if (items.get(i).getDescription().equals(itemName)){{
+              items.remove(i);
+            }
+        }
+        
+    }
+}
 }
