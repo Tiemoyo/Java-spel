@@ -7,8 +7,9 @@ import java.util.HashMap;
  * This class holds an enumeration of all command words known to the game.
  * It is used to recognise commands as they are typed in.
  *
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author Quinten de Haan
+ * @author Tiemo
+ * @version 2020.01.22
  */
 
 public class CommandWords
@@ -50,7 +51,6 @@ public class CommandWords
         validCommands.put("bewapen", CommandWord.EQP);
         
         validCommands.put("take", CommandWord.TAKE);
-        validCommands.put("pick up", CommandWord.TAKE);
         validCommands.put("neem", CommandWord.TAKE);
         validCommands.put("pak", CommandWord.TAKE);
         
@@ -62,6 +62,15 @@ public class CommandWords
         
         validCommands.put("stats", CommandWord.STAT);
         validCommands.put("attributes", CommandWord.STAT);
+        validCommands.put("attributen", CommandWord.STAT);
+        
+        validCommands.put("item", CommandWord.ITEM);
+        
+        validCommands.put("use", CommandWord.USE);
+        validCommands.put("gebruik", CommandWord.USE);
+        
+        validCommands.put("drop", CommandWord.DROP);
+        validCommands.put("neerzetten", CommandWord.DROP);
     }
 
     /**

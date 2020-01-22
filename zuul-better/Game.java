@@ -13,8 +13,9 @@ import java.util.HashMap;
  *  rooms, creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
  * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author Quinten de Haan
+ * @author Tiemo
+ * @version 2020.01.22
  */
 
 public class Game 
@@ -24,15 +25,16 @@ public class Game
     private boolean inConvo;
     private boolean gameStart;
     private boolean inFight;
+    private boolean gameOver;
     private Convo currentConvo;
     private HashMap<String, Item> inventory;
     private HashMap<String, Item> equipment;
     private ArrayList<Room> roomhistory;
-      
+
     private int currentHP;
     private Player player;
     private Fight fight;
-    
+
     private Room small_room;
 
     //The following are flags to ensure the conversation system works properly.
@@ -52,6 +54,7 @@ public class Game
         inConvo = false;
         gameStart = false;
         inFight = false;
+        gameOver = false;
         parser = new Parser();
         inventory = new HashMap<String, Item>();
         equipment = new HashMap<String, Item>();
@@ -59,6 +62,9 @@ public class Game
         player = new Player();
         currentHP = player.getTotalHP();
         fight = new Fight();
+
+        Item ration = new Item("Ration", "A ration of food. Fully heals.", "Health");
+        inventory.put("Ration", ration);
 
         createRooms();
     }
@@ -68,18 +74,24 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, training_ground, gatehouse, outer_courtyard, inner_courtyard, warehouse, south_wall, se_wall, ne_wall, north_wall, armory;
+        Room outside, training_ground, gatehouse, outer_courtyard, inner_courtyard, warehouse, warehousebedroom, south_wall, se_wall, ne_wall, north_wall, armory, west_wall, nw_wall, tower;
 
         Item stick = new Item("Stick", "A sturdy wooden tree branch.\n+1 Damage.", "Weapon");
         Item tunic = new Item("Tunic", "A sturdy tunic that protects against damage.\n+1 Armor.", "Armor");
+        Item bandages = new Item("Bandages", "Bandages used to stop bleeding. Fully heals.", "Health");
+        Item buckler = new Item("Buckler", "A relatively small round shield.\n+1 Shield.", "Shield");
+        Item bread = new Item("Bead", "A loaf of bread. Fully heals.", "Health");
+        Item innerkey = new Item("InnerKey", "A key to access the inner walls of the castle.", "Key1");
+        Item keychain = new Item("Keychain", "Several keys on  chain, includes keys for guard towers.", "Key2");
         stick.setDam(1);
         tunic.setArmor(1);
+        buckler.setShield(1);
 
         // create the rooms
         outside = new Room("You stand before the intimidating dark castle. To the north is a drawbridge leading to the castle gate, to the west is a training ground.");
         training_ground = new Room("You are in a training ground next to the castle's ruined western wall. There is an old soldier tending to his equipment. To the east is the castle gate.");
         gatehouse = new Room("You are inside the gatehouse of the outer wall. To the north is a courtyard, to the east are stairs leading to the top of the wall. The western stairs are blocked.");
-        outer_courtyard = new Room("You find yourself in the outer courtyard of the castle. To the north is a raised drawbridge, to the east is an important-looking stone building, to the west is a wooden building, to the south is the entrance gatehouse.");
+        outer_courtyard = new Room("You find yourself in the outer courtyard of the castle. To the north is a raised drawbridge, to the east is a stone building, to the west is a wooden building, to the south is the gatehouse.");
         south_wall = new Room("You are standing on the castle's southern wall. From here you can see where you first arrived from. To the west is the stairs down the gatehouse, to the east is the south-east castle wall.");
         se_wall = new Room("You're standing on the south-east wall, you can see a river flowing below. To the north is the north-east part of the wall and to the south is the southern wall.");
         ne_wall = new Room("You are on the north-east wall, you can see a mountain in the distance. To the west the wall connects to the inner castle wall, to the south is the south-eastern wall.");
@@ -87,7 +99,11 @@ public class Game
         small_room = new Room("You find yourself in a small room with some stuff lying around. Above you is the trapdoor you fell through, too high to climb through. To the south is a door.");
         armory = new Room("You are in the castle's armoury. Unfortunately, it seems there's not much of value left. To the north is a small room, to the west is a now-unlocked door.");
         inner_courtyard = new Room("WIP");
-        warehouse = new Room("You are in a run-down warehouse, there isn't much here, aside from some rats. To the west is a ladder.");
+        warehouse = new Room("You are in a run-down warehouse, there isn't much here, aside from some rats. To the west is a ladder to a higher floor.");
+        warehousebedroom = new Room("You are on the second floor of the warehouse. Someone made a bedroom of sorts here, leaving their belongings. To the east is the ladder down, west is a window that leads to the western wall.");
+        west_wall = new Room("You're standing on the western wall. Most of the western walls have crumbled but this section is still standing. To the east is the warehouse window, to the north the wall continues.");
+        nw_wall = new Room("You are on the north-west wall. There is a guard tower to the north, to the south the western wall continues.");
+        tower = new Room("You are in the western guard tower. You can see all of the surroundings from here, including the inner courtyard. To the south is the door to the western wall.");
 
         // initialise room exits
         outside.setExit("west", training_ground);
@@ -98,6 +114,13 @@ public class Game
         gatehouse.setExit("east", south_wall);
         outer_courtyard.setExit("south", gatehouse);
         outer_courtyard.setExit("east", armory);
+        outer_courtyard.setExit("west", warehouse);
+        warehouse.setExit("west", warehousebedroom);
+        warehousebedroom.setExit("east", warehouse);
+        warehousebedroom.setExit("west", west_wall);
+        west_wall.setExit("east", warehousebedroom);
+        west_wall.setExit("north", nw_wall);
+        nw_wall.setExit("south", west_wall);
         south_wall.setExit("west", gatehouse);
         south_wall.setExit("east", se_wall);
         se_wall.setExit("south", south_wall);
@@ -110,18 +133,29 @@ public class Game
         small_room.setExit("south", armory);
         armory.setExit("north", small_room);
         armory.setExit("west", outer_courtyard);
-        
+
         outside.addItem("Stick", stick);
         small_room.addItem("Tunic", tunic);
-        
+        small_room.addItem("Bandages", bandages);
+        armory.addItem("Keychain", keychain);
+        warehousebedroom.addItem("Bread", bread);
+        warehousebedroom.addItem("Buckler", buckler);
+        tower.addItem("InnerKey", innerkey);
+
         inner_courtyard.isLocked();
         armory.isLocked();
-        
+        tower.isLocked();
+
         outer_courtyard.setBattle("randomguard");
         south_wall.setBattle("randomguard");
         se_wall.setBattle("randomguard");
         ne_wall.setBattle("randomguard");
         north_wall.setBattle("randomguard");
+        west_wall.setBattle("randomguard");
+        nw_wall.setBattle("randomguard");
+        warehouse.setBattle("randomrat");
+        armory.setBattle("rogue");
+        tower.setBattle("captain");
 
         currentRoom = outside;  // start game outside     
     }    
@@ -222,8 +256,16 @@ public class Game
             else if (commandWord == CommandWord.INV){
                 printInventory();
             }
+            else if (commandWord == CommandWord.STAT) {
+                printStats();
+            }
             else{
                 System.out.println("Can't do that while fighting.");
+            }
+        }
+        else if(gameOver == true){
+            if (commandWord != CommandWord.QUIT) {
+                System.out.println("The game is over, you can only quit the game now.");
             }
         }
         else{          
@@ -251,8 +293,20 @@ public class Game
             else if (commandWord == CommandWord.TAKE) {
                 take(command);
             }
+            else if (commandWord == CommandWord.STAT) {
+                printStats();
+            }
             else if (commandWord == CommandWord.BACK) {
                 back();
+            }
+            else if (commandWord == CommandWord.ITEM) {
+                printItem(command);
+            }
+            else if (commandWord == CommandWord.USE) {
+                useItem(command);
+            }
+            else if (commandWord == CommandWord.DROP) {
+                dropItem(command);
             }
         }
 
@@ -320,10 +374,17 @@ public class Game
                         System.out.println(fight.getAction("randomguard"));
                     }
                 }
+                else if(currentRoom.getBattleType() == "randomrat"){
+                    if(fight.randomBattle() == true){
+                        inFight = true;
+                        fight.lowRandomize();
+                        System.out.println(fight.getAction("randomrat"));
+                    } 
+                }
             }
         }
     }
-    
+
     private void trapdoor(){
         Room nextRoom = currentRoom.getExit("trapdoor");
         if(nextRoom != null){
@@ -344,7 +405,8 @@ public class Game
     /**
      * "printInventory prints out the inventory"
      */
-    private void printInventory() {
+    private void printInventory() 
+    {
         if (inventory.size() == 0) {
             System.out.println("You are not carrying anything.");
         }
@@ -359,6 +421,101 @@ public class Game
                 System.out.print("\n");
             }
         }
+    }
+
+    private void printItem(Command command) 
+    {
+        if(!command.hasSecondWord()) {          
+            System.out.println("Look at what item?");
+            return;
+        }
+        String gItem = command.getSecondWord();
+        if(inventory.get(gItem) == null){
+            System.out.println("You don't have that item.");
+            return;
+        }
+        Item item = inventory.get(gItem);   
+        System.out.println(item.getDescription());
+    }
+
+    private void printStats() 
+    {
+        int xp = player.getXP();
+        int xpcap;
+        if(player.getlvl() == 1){
+            xpcap = 5;
+        }
+        else if(player.getlvl() == 2){
+            xpcap = 10;
+        }
+        else if(player.getlvl() == 3){
+            xpcap = 20;
+        }
+        else if(player.getlvl() == 4){
+            xpcap = 40;
+        }
+        else if(player.getlvl() == 5){
+            xpcap = 80;
+        }
+        else{
+            xpcap = 100;
+        }
+        System.out.println();
+        System.out.println("You are a level " + player.getlvl() + " hero.");
+        System.out.println();
+        System.out.println("You have " + currentHP + "/" + player.getTotalHP() + " HP.");
+        System.out.println("You have " + xp + "/" + xpcap + " XP.");
+        System.out.println("You have " + player.getStr() + " Strength.");
+        System.out.println("You have " + player.getDex() + " Dexterity.");
+        System.out.println("You have " + player.getEnd() + " Endurance.");
+        System.out.println();
+        System.out.println("You can deal " + player.getDamage() + " Damage.");
+        System.out.println("You have " + player.getArmor() + " Armor");
+        System.out.println("You can carry " + inventory.size() + "/" + player.getInvSpace() + " items");
+        System.out.println();
+    }
+
+    private void useItem(Command command) 
+    {
+        if(!command.hasSecondWord()) {          
+            System.out.println("Use what?");
+            return;
+        }
+        String gItem = command.getSecondWord();
+        if(inventory.get(gItem) == null){
+            System.out.println("You don't have that item.");
+            return;
+        }
+        Item item = inventory.get(gItem);   
+        if(item.getType() == "Health"){
+            currentHP = player.getTotalHP();
+            inventory.remove(gItem);
+            System.out.println("Consumed " + item + ". Health restored.");
+        }
+        else if(item.getType() == "Key1"){
+            Room nextRoom = currentRoom.getExit("west");
+            if(nextRoom.getLock()){
+                nextRoom.isUnlocked();
+                System.out.println("You unlocked the area to the west. Key thrown away.");
+            }
+        }
+    }
+
+    private void dropItem(Command command) 
+    {
+        if(!command.hasSecondWord()) {          
+            System.out.println("Drop what?");
+            return;
+        }
+        String gItem = command.getSecondWord();
+        if(inventory.get(gItem) == null){
+            System.out.println("You don't have that item.");
+            return;
+        }
+        Item item = inventory.get(gItem);
+        currentRoom.items.put(item.getName(), item);
+        inventory.remove(gItem);
+        System.out.println("Dropped " + item.getName() + ".");
     }
 
     private void equipItem(Command command)
@@ -512,8 +669,7 @@ public class Game
         if(playerhits == true){
             fight.dealDamage(player.getDamage());
             System.out.println(fight.getAction("youhit"));
-            System.out.println("You dealt " + player.getDamage() + " damage.");
-            fight.addTurn();
+            System.out.println("You dealt " + player.getDamage() + " damage.");            
             if(fight.getEnemyHP() < 1){
                 winFight();
                 return;
@@ -521,20 +677,34 @@ public class Game
         }
         else{
             System.out.println(fight.getAction("youmiss"));
-            fight.addTurn();
         }
         boolean enemyhits = fight.enemyHitChance();
+        boolean block = player.blockChance();
         if(enemyhits == true){
-            currentHP -= fight.getEnemyDam();
-            System.out.println(fight.getAction("enemyhit"));
-            System.out.println("Enemy dealt " + fight.getEnemyDam() + " damage.");
-            if(currentHP < 1){
-                loseFight();
-                return;
+            int damage = fight.getEnemyDam();
+            damage -= player.getArmor();
+            if(damage < 0){
+                damage = 0; 
             }
+            if(block){
+                System.out.println(fight.getAction("enemyhit"));
+                System.out.println("Damage blocked with shield!");
+                fight.addTurn();
+            }
+            else{
+                currentHP -= damage;            
+                System.out.println(fight.getAction("enemyhit"));
+                System.out.println("Enemy dealt " + damage + " damage.");               
+                if(currentHP < 1){
+                    loseFight();
+                    return;
+                }
+                fight.addTurn();
+            }            
         }
         else{
             System.out.println(fight.getAction("enemymiss"));
+            fight.addTurn();
         }
     }
 
@@ -576,8 +746,7 @@ public class Game
         }
         else{
             System.out.println("You have died.\nGAME OVER");
-            Command quit = new Command(CommandWord.QUIT , null);
-            processCommand(quit);
+            gameOver = true;
         }
     }
 
@@ -588,20 +757,32 @@ public class Game
         }
         else{
             if(!command.hasSecondWord()){
-                for (String i : currentRoom.items.keySet()) {                    
-                    Item item = currentRoom.items.get(i);
-                    inventory.put(item.getName(), item);
+                int size = inventory.size();
+                size += currentRoom.items.size();
+                if(size <= player.getInvSpace()){
+                    for (String i : currentRoom.items.keySet()) {                    
+                        Item item = currentRoom.items.get(i);
+                        inventory.put(item.getName(), item);
+                    }
+                    currentRoom.items.clear();
+                    System.out.println("All items taken.");
                 }
-                currentRoom.items.clear();
-                System.out.println("All items taken.");
+                else{
+                    System.out.println("Can't carry all items!");
+                }
             }
             else{
                 String gItem = command.getSecondWord();
                 if(currentRoom.items.get(gItem) != null){
-                    Item item = currentRoom.items.get(gItem);
-                    inventory.put(gItem, item);
-                    currentRoom.items.remove(gItem);
-                    System.out.println("You have taken the " + item.getName() + ".");
+                    if(inventory.size() < player.getInvSpace()){
+                        Item item = currentRoom.items.get(gItem);
+                        inventory.put(gItem, item);
+                        currentRoom.items.remove(gItem);
+                        System.out.println("You have taken the " + item.getName() + ".");
+                    }
+                    else{
+                        System.out.println("Can't carry any more items!");
+                    }
                 }
                 else{
                     System.out.println("No " + gItem + " here.");

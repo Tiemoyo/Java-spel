@@ -5,8 +5,9 @@ import java.util.HashMap;
  *
  * Write a description of class Item here.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Quinten de Haan
+ * @author Tiemo
+ * @version 2020.01.22
  */
 public class Item
 {

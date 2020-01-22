@@ -2,10 +2,11 @@
 /**
  * Write a description of class CommandWord here.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Quinten de Haan
+ * @author Tiemo
+ * @version 2020.01.22
  */
 public enum CommandWord
 {
-    GO, QUIT, HELP, LOOK, TALK, ATT, INV, EQP, START, BACK, UNKNOWN, TAKE, STAT; 
+    GO, QUIT, HELP, LOOK, TALK, ATT, INV, EQP, START, BACK, UNKNOWN, TAKE, STAT, ITEM, USE, DROP;
 }

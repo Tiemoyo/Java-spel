@@ -4,8 +4,8 @@ import java.util.Iterator;
 /**
  * Write a description of class Convo here.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Quinten de Haan
+ * @version 2020.01.22
  */
 public class Convo
 {

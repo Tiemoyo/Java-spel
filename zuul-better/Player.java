@@ -6,8 +6,8 @@ import java.util.Random;
 /**
  * Write a description of class Player here.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Quinten de Haan
+ * @version 2020.01.22
  */
 public class Player
 {
@@ -112,6 +112,16 @@ public class Player
     public int getDex()
     {
         return dexterity;
+    }
+    
+    public int getStr()
+    {
+        return strength;
+    }
+    
+    public int getEnd()
+    {
+        return endurance;
     }
 
     public void setArmor(int value)

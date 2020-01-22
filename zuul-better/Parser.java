@@ -13,8 +13,9 @@ import java.util.HashMap;
  * the known commands, and if the input is not one of the known commands, it
  * returns a command object that is marked as an unknown command.
  * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author Quinten de Haan
+ * @author Tiemo
+ * @version 2020.01.22
  */
 public class Parser 
 {

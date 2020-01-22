@@ -7,8 +7,8 @@ import java.util.Random;
 /**
  * Write a description of class Fight here.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Quinten de Haan
+ * @version 2020.01.22
  */
 public class Fight
 {
@@ -34,13 +34,13 @@ public class Fight
 
     public void lowRandomize()
     {
-        int ranHP = randomGenerator.nextInt(6);
-        ranHP += 1;
+        int ranHP = randomGenerator.nextInt(7);
+        ranHP += 3;
         enemyHP = ranHP;
-        int ranDAM = randomGenerator.nextInt(2);
+        int ranDAM = randomGenerator.nextInt(3);
         ranDAM += 1;
         enemyDAM = ranDAM;
-        int ranXP = randomGenerator.nextInt(3);
+        int ranXP = randomGenerator.nextInt(5);
         ranXP += 1;
         xpGain = ranXP;
     }
