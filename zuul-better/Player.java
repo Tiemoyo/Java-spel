@@ -11,10 +11,6 @@ import java.util.Random;
  */
 public class Player
 {
-    // baseHP is the hitpoints a players has before modifiers
-    private int baseHP;
-    // baseINV is how much items a player can have before modifiers
-    private int baseINV;
     private int strength;
     private int dexterity;
     private int endurance;
@@ -35,10 +31,7 @@ public class Player
     {
         lvl = 1;
         xp = 0;
-
-        baseHP = 1;
-        baseINV = 1;
-
+        
         strength = 1;
         dexterity = 1;
         endurance = 1;
@@ -52,7 +45,7 @@ public class Player
 
     public int getTotalHP()
     {
-        int HP = baseHP;
+        int HP = 1;
         HP += lvl;
         int endhp = endurance * 2;
         HP += endhp;
@@ -61,9 +54,9 @@ public class Player
 
     public int getInvSpace()
     {
-        int INV = baseINV;
-        INV += strength;
-        INV += endurance;
+        int INV = 1;
+        INV += lvl;
+        INV += dexterity;
         return INV;
     }
 
@@ -113,12 +106,12 @@ public class Player
     {
         return dexterity;
     }
-    
+
     public int getStr()
     {
         return strength;
     }
-    
+
     public int getEnd()
     {
         return endurance;
@@ -148,7 +141,7 @@ public class Player
         }
         return hit;
     }
-    
+
     public boolean blockChance()
     {
         boolean blocked = false;
@@ -181,7 +174,7 @@ public class Player
     public boolean lvlCheck()
     {
         if(lvl == 1){
-            if(xp > 5){
+            if(xp >= 5){
                 xp -= 5;
                 return true;
             }
@@ -190,7 +183,7 @@ public class Player
             }
         }
         else if(lvl == 2){
-            if(xp > 10){
+            if(xp >= 10){
                 xp -= 10;
                 return true;
             }
@@ -199,7 +192,7 @@ public class Player
             }
         }
         else if(lvl == 3){
-            if(xp > 20){
+            if(xp >= 20){
                 xp -= 20;
                 return true;
             }
@@ -208,7 +201,7 @@ public class Player
             }
         }
         else if(lvl == 4){
-            if(xp > 40){
+            if(xp >= 40){
                 xp -= 40;
                 return true;
             }
@@ -217,7 +210,7 @@ public class Player
             }
         }
         else if(lvl == 5){
-            if(xp > 80){
+            if(xp >= 80){
                 xp -= 80;
                 return true;
             }
@@ -226,7 +219,7 @@ public class Player
             }
         }
         else if(lvl > 5){
-            if(xp > 100){
+            if(xp >= 100){
                 xp -= 100;
                 return true;
             }

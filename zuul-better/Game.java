@@ -80,7 +80,7 @@ public class Game
         Item tunic = new Item("Tunic", "A sturdy tunic that protects against damage.\n+1 Armor.", "Armor");
         Item bandages = new Item("Bandages", "Bandages used to stop bleeding. Fully heals.", "Health");
         Item buckler = new Item("Buckler", "A relatively small round shield.\n+1 Shield.", "Shield");
-        Item bread = new Item("Bead", "A loaf of bread. Fully heals.", "Health");
+        Item bread = new Item("Bread", "A loaf of bread. Fully heals.", "Health");
         Item innerkey = new Item("InnerKey", "A key to access the inner walls of the castle.", "Key1");
         Item keychain = new Item("Keychain", "Several keys on  chain, includes keys for guard towers.", "Key2");
         stick.setDam(1);
@@ -121,6 +121,7 @@ public class Game
         west_wall.setExit("east", warehousebedroom);
         west_wall.setExit("north", nw_wall);
         nw_wall.setExit("south", west_wall);
+        nw_wall.setExit("north", tower);
         south_wall.setExit("west", gatehouse);
         south_wall.setExit("east", se_wall);
         se_wall.setExit("south", south_wall);
@@ -391,7 +392,7 @@ public class Game
             System.out.println("You notice the keyhole for the door seems rather intricate. As you inspect it, you suddenly feel the ground beneath you give way!");
             System.out.println("You fell through a trapdoor!");
             currentRoom.setDescription("You are on the north part of the wall connecting to the inner wall. To the west is a door leading to the inner courtyard, to the east is the north-east wall. There is also a trapdoor you fell through earlier.");            
-            currentRoom.setExit("down", small_room);
+            //currentRoom.setExit("down", small_room);
             currentRoom = nextRoom;
             roomhistory.clear();
             nextRoom = currentRoom.getExit("south");
@@ -490,13 +491,22 @@ public class Game
         if(item.getType() == "Health"){
             currentHP = player.getTotalHP();
             inventory.remove(gItem);
-            System.out.println("Consumed " + item + ". Health restored.");
+            System.out.println("Consumed " + gItem + ". Health restored.");
         }
         else if(item.getType() == "Key1"){
             Room nextRoom = currentRoom.getExit("west");
             if(nextRoom.getLock()){
                 nextRoom.isUnlocked();
-                System.out.println("You unlocked the area to the west. Key thrown away.");
+                inventory.remove(gItem);
+                System.out.println("You unlocked the door to the inner courtyard. Key thrown away.");
+            }
+        }
+        else if(item.getType() == "Key2"){
+            Room nextRoom = currentRoom.getExit("north");
+            if(nextRoom.getLock()){
+                nextRoom.isUnlocked();
+                inventory.remove(gItem);
+                System.out.println("You unlocked the door to the tower. Keychain thrown away.");
             }
         }
     }
@@ -513,7 +523,11 @@ public class Game
             return;
         }
         Item item = inventory.get(gItem);
-        currentRoom.items.put(item.getName(), item);
+        if(item.getEquip()){
+            item.unEquipIt();
+            equipment.remove(item.getType());
+        }
+        currentRoom.items.put(item.getName(), item);        
         inventory.remove(gItem);
         System.out.println("Dropped " + item.getName() + ".");
     }
@@ -716,7 +730,9 @@ public class Game
         System.out.println("You gained " + gottenXP + " XP!");
         if(player.lvlCheck() == true){
             player.lvlUp();
-            currentHP += 1;
+            if(player.getTotalHP() > currentHP){
+                currentHP += 1;
+            }
         }
         inFight = false;
         fight.resetTurn();
