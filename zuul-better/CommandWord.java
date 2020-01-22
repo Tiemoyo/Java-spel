@@ -7,5 +7,5 @@
  */
 public enum CommandWord
 {
-    GO, QUIT, HELP, LOOK, TALK, ATT, INV, EQP, START, BACK, UNKNOWN, TAKE; 
+    GO, QUIT, HELP, LOOK, TALK, ATT, INV, EQP, START, BACK, UNKNOWN, TAKE, STAT; 
 }

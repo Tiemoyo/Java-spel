@@ -59,6 +59,9 @@ public class CommandWords
         
         validCommands.put("back", CommandWord.BACK);
         validCommands.put("terug", CommandWord.BACK);
+        
+        validCommands.put("stats", CommandWord.STAT);
+        validCommands.put("attributes", CommandWord.STAT);
     }
 
     /**

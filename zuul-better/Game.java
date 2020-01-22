@@ -28,10 +28,12 @@ public class Game
     private HashMap<String, Item> inventory;
     private HashMap<String, Item> equipment;
     private ArrayList<Room> roomhistory;
-
+      
     private int currentHP;
     private Player player;
     private Fight fight;
+    
+    private Room small_room;
 
     //The following are flags to ensure the conversation system works properly.
     private Convo trainerfirst;
@@ -66,31 +68,60 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, training_ground, gatehouse, outer_courtyard, warehouse, south_wall, se_wall;
+        Room outside, training_ground, gatehouse, outer_courtyard, inner_courtyard, warehouse, south_wall, se_wall, ne_wall, north_wall, armory;
 
-        Item stick = new Item("Stick", "A sturdy wooden tree branch", "Weapon");
+        Item stick = new Item("Stick", "A sturdy wooden tree branch.\n+1 Damage.", "Weapon");
+        Item tunic = new Item("Tunic", "A sturdy tunic that protects against damage.\n+1 Armor.", "Armor");
         stick.setDam(1);
+        tunic.setArmor(1);
 
         // create the rooms
         outside = new Room("You stand before the intimidating dark castle. To the north is a drawbridge leading to the castle gate, to the west is a training ground.");
         training_ground = new Room("You are in a training ground next to the castle's ruined western wall. There is an old soldier tending to his equipment. To the east is the castle gate.");
         gatehouse = new Room("You are inside the gatehouse of the outer wall. To the north is a courtyard, to the east are stairs leading to the top of the wall. The western stairs are blocked.");
-        outer_courtyard = new Room("You find yourself in the outer courtyard of the castle. To the north is a raised drawbridge, to the east is an important-looking stone building, to the west is a wooden building.");
+        outer_courtyard = new Room("You find yourself in the outer courtyard of the castle. To the north is a raised drawbridge, to the east is an important-looking stone building, to the west is a wooden building, to the south is the entrance gatehouse.");
         south_wall = new Room("You are standing on the castle's southern wall. From here you can see where you first arrived from. To the west is the stairs down the gatehouse, to the east is the south-east castle wall.");
         se_wall = new Room("You're standing on the south-east wall, you can see a river flowing below. To the north is the north-east part of the wall and to the south is the southern wall.");
+        ne_wall = new Room("You are on the north-east wall, you can see a mountain in the distance. To the west the wall connects to the inner castle wall, to the south is the south-eastern wall.");
+        north_wall = new Room("You are on the north part of the wall connecting to the inner wall. To the west is a door leading to the inner courtyard, to the east is the north-east wall.");
+        small_room = new Room("You find yourself in a small room with some stuff lying around. Above you is the trapdoor you fell through, too high to climb through. To the south is a door.");
+        armory = new Room("You are in the castle's armoury. Unfortunately, it seems there's not much of value left. To the north is a small room, to the west is a now-unlocked door.");
+        inner_courtyard = new Room("WIP");
         warehouse = new Room("You are in a run-down warehouse, there isn't much here, aside from some rats. To the west is a ladder.");
 
         // initialise room exits
         outside.setExit("west", training_ground);
         outside.setExit("north", gatehouse);
-        outside.addItem("Stick", stick);
         training_ground.setExit("east", outside);
         training_ground.setConvo("trainerfirst");        
         gatehouse.setExit("north", outer_courtyard);
         gatehouse.setExit("east", south_wall);
+        outer_courtyard.setExit("south", gatehouse);
+        outer_courtyard.setExit("east", armory);
         south_wall.setExit("west", gatehouse);
         south_wall.setExit("east", se_wall);
         se_wall.setExit("south", south_wall);
+        se_wall.setExit("north", ne_wall);
+        ne_wall.setExit("south", se_wall);
+        ne_wall.setExit("west", north_wall);
+        north_wall.setExit("east", ne_wall);
+        north_wall.setExit("west", inner_courtyard);
+        north_wall.setExit("trapdoor", small_room);
+        small_room.setExit("south", armory);
+        armory.setExit("north", small_room);
+        armory.setExit("west", outer_courtyard);
+        
+        outside.addItem("Stick", stick);
+        small_room.addItem("Tunic", tunic);
+        
+        inner_courtyard.isLocked();
+        armory.isLocked();
+        
+        outer_courtyard.setBattle("randomguard");
+        south_wall.setBattle("randomguard");
+        se_wall.setBattle("randomguard");
+        ne_wall.setBattle("randomguard");
+        north_wall.setBattle("randomguard");
 
         currentRoom = outside;  // start game outside     
     }    
@@ -105,7 +136,7 @@ public class Game
         traininterest = new Convo("'Good thinkin' lad. To tell ya truth I'm a bit rusty, so how about we spar? If ya win, I'll give ya one of my spare swords.'\nA. Accept.\nB. Refuse.");
         traindisinterest = new Convo("'Confident, are ya? Listen here, if yer able to beat me one-on-one, you can win one of my swords'\nA. Accept.\nB. Refuse.");
         trainaccept = new Convo("'Alright, let's see what you're made of!'");
-        trainrefuse = new Convo("'It's your loss.' The soldier returns his attention to his equipment ending the conversation.");
+        trainrefuse = new Convo("'It's your loss.' The soldier returns his attention to his equipment, ending the conversation.");
         trainreturn = new Convo("'Ah, you return! Want to give it another go?'\nYes.\nNo.");
 
         trainerfirst.setLink("a", traininterest);
@@ -256,7 +287,7 @@ public class Game
      */
     private void goRoom(Command command) 
     {
-        if(!command.hasSecondWord()) {
+        if(!command.hasSecondWord()){
             // if there is no second word, we don't know where to go...
             System.out.println("Go where?");
             return;
@@ -267,13 +298,46 @@ public class Game
         // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
 
-        if (nextRoom == null) {
+        if(nextRoom == null){
             System.out.println("Can't go there.");
         }
-        else {
+        else if(direction == "trapdoor"){
+            System.out.println("Trapdoor?");
+        }
+        else if(nextRoom.getLock() == true){
+            System.out.println("Locked, can't go there.");
+            trapdoor();
+        }
+        else{
             roomhistory.add(currentRoom);
             currentRoom = nextRoom;
             System.out.println(currentRoom.getShortDescription());
+            if(currentRoom.getBattle()){
+                if(currentRoom.getBattleType() == "randomguard"){
+                    if(fight.randomBattle() == true){
+                        inFight = true;
+                        fight.lowRandomize();
+                        System.out.println(fight.getAction("randomguard"));
+                    }
+                }
+            }
+        }
+    }
+    
+    private void trapdoor(){
+        Room nextRoom = currentRoom.getExit("trapdoor");
+        if(nextRoom != null){
+            System.out.println("You notice the keyhole for the door seems rather intricate. As you inspect it, you suddenly feel the ground beneath you give way!");
+            System.out.println("You fell through a trapdoor!");
+            currentRoom.setDescription("You are on the north part of the wall connecting to the inner wall. To the west is a door leading to the inner courtyard, to the east is the north-east wall. There is also a trapdoor you fell through earlier.");            
+            currentRoom.setExit("down", small_room);
+            currentRoom = nextRoom;
+            roomhistory.clear();
+            nextRoom = currentRoom.getExit("south");
+            nextRoom.isUnlocked();
+            System.out.println(currentRoom.getShortDescription());
+        }
+        else{
         }
     }
 
@@ -477,8 +541,9 @@ public class Game
     private void winFight()
     {
         System.out.println(fight.getAction("youwin"));
-        player.addXP(fight.getXPGain());
-        System.out.println("You gained " + fight.getXPGain() + " XP!");
+        int gottenXP = fight.getXPGain();
+        player.addXP(gottenXP);
+        System.out.println("You gained " + gottenXP + " XP!");
         if(player.lvlCheck() == true){
             player.lvlUp();
             currentHP += 1;

@@ -23,7 +23,10 @@ public class Room
     private HashMap<String, Room> exits;// stores exits of this room.
     public HashMap<String, Item> items;
     private boolean hasConvo;
+    private boolean isLocked;
+    private boolean hasBattle;
     private String convotype;
+    private String battletype;
 
     /**
      * Create a room described "description". Initially, it has
@@ -37,6 +40,7 @@ public class Room
         exits = new HashMap<String, Room>();
         items = new HashMap<String, Item>();
         hasConvo = false;
+        isLocked = false;
     }
 
     /**
@@ -47,6 +51,21 @@ public class Room
     public void setExit(String direction, Room neighbor) 
     {
         exits.put(direction, neighbor);
+    }
+    
+    public void isLocked()
+    {
+        isLocked = true;
+    }
+    
+    public void isUnlocked()
+    {
+        isLocked = false;
+    }
+    
+    public boolean getLock()
+    {
+        return isLocked;
     }
 
     public void addItem(String string, Item item)
@@ -76,6 +95,11 @@ public class Room
     public String getShortDescription()
     {
         return description;
+    }
+    
+    public void setDescription(String des)
+    {
+        description = des;
     }
 
     /**
@@ -134,5 +158,21 @@ public class Room
     public void unsetConvo()
     {
         hasConvo = false;
+    }
+    
+    public boolean getBattle()
+    {
+        return hasBattle;
+    }
+
+    public String getBattleType()
+    {
+        return battletype;
+    }
+
+    public void setBattle(String type)
+    {
+        hasBattle = true;
+        battletype = type;
     }
 }

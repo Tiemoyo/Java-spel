@@ -34,7 +34,28 @@ public class Fight
 
     public void lowRandomize()
     {
-        // nothing yet
+        int ranHP = randomGenerator.nextInt(6);
+        ranHP += 1;
+        enemyHP = ranHP;
+        int ranDAM = randomGenerator.nextInt(2);
+        ranDAM += 1;
+        enemyDAM = ranDAM;
+        int ranXP = randomGenerator.nextInt(3);
+        ranXP += 1;
+        xpGain = ranXP;
+    }
+    
+    public boolean randomBattle()
+    {
+        boolean battle = false;
+        int chance = randomGenerator.nextInt(5);
+        if(chance == 0){
+            battle = true;
+            return battle;
+        }
+        else{
+            return battle;
+        }
     }
 
     public void setEnemyHP(int hp)
@@ -124,15 +145,17 @@ public class Fight
 
     public String getAction(String action)
     {
-        String youhit, youmiss, youwin, youlose, trainbegin, enemyhit, enemymiss;
+        String youhit, youmiss, youwin, youlose, trainbegin, enemyhit, enemymiss, randomguard, randomrat;
 
         youhit = "\nYou successfully hit the enemy!";
         youmiss = "\nYou miss the enemy!";
         youwin = "\nYou stand victorious!";
         youlose = "\nYou are defeated..";
         trainbegin = "\nThe old soldier prepares for battle!";
+        randomguard = "\nYou encounter a guard!";
+        randomrat = "\nYou encounter a large rat!";
         enemyhit = "\nThe enemy hits you!";
-        enemymiss = "\nThe enemy misses!.";
+        enemymiss = "\nThe enemy misses!";
 
         if(action == "youhit"){
             return youhit;
@@ -151,6 +174,12 @@ public class Fight
         }
         else if(action == "enemymiss"){
             return enemymiss;
+        }
+        else if(action == "randomguard"){
+            return randomguard;
+        }
+        else if(action == "randomrat"){
+            return randomrat;
         }
         else{
             return youlose;
