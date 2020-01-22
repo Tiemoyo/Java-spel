@@ -56,6 +56,9 @@ public class CommandWords
         
         validCommands.put("look", CommandWord.LOOK);
         validCommands.put("kijk", CommandWord.LOOK);
+        
+        validCommands.put("back", CommandWord.BACK);
+        validCommands.put("terug", CommandWord.BACK);
     }
 
     /**

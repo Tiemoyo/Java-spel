@@ -36,7 +36,7 @@ public class Player
         lvl = 1;
         xp = 0;
 
-        baseHP = 2;
+        baseHP = 1;
         baseINV = 1;
 
         strength = 1;
@@ -53,7 +53,9 @@ public class Player
     public int getTotalHP()
     {
         int HP = baseHP;
-        HP += endurance;
+        HP += lvl;
+        int endhp = endurance * 2;
+        HP += endhp;
         return HP;
     }
 
@@ -135,6 +137,35 @@ public class Player
             hit = true;
         }
         return hit;
+    }
+    
+    public boolean blockChance()
+    {
+        boolean blocked = false;
+        int blockchance;
+        if(shield == 1){
+            blockchance = randomGenerator.nextInt(5);
+            if(blockchance == 0){
+                blocked = true;
+                return blocked;
+            }
+            else{
+                return blocked;
+            }
+        }
+        else if(shield == 2){
+            blockchance = randomGenerator.nextInt(4);
+            if(blockchance == 0){
+                blocked = true;
+                return blocked;
+            }
+            else{
+                return blocked;
+            }
+        }
+        else{
+            return blocked;
+        }
     }
 
     public boolean lvlCheck()

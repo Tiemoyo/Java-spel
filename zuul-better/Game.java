@@ -38,7 +38,6 @@ public class Game
     private Convo trainaccept;
     private Convo trainrefuse;
     private Convo trainreturn;
-    private Convo trainwin;
 
     /**
      * Create the game and initialise its internal map.
@@ -67,21 +66,31 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, training_ground;
+        Room outside, training_ground, gatehouse, outer_courtyard, warehouse, south_wall, se_wall;
 
         Item stick = new Item("Stick", "A sturdy wooden tree branch", "Weapon");
         stick.setDam(1);
 
         // create the rooms
-        outside = new Room("You stand before the intimidating dark castle. To the north is the castle gate, to the west is a training ground.");
-        training_ground = new Room("You are in a training ground next to the castle. There is an old soldier tending to his equipment. Back to the east is the castle gate.");
+        outside = new Room("You stand before the intimidating dark castle. To the north is a drawbridge leading to the castle gate, to the west is a training ground.");
+        training_ground = new Room("You are in a training ground next to the castle's ruined western wall. There is an old soldier tending to his equipment. To the east is the castle gate.");
+        gatehouse = new Room("You are inside the gatehouse of the outer wall. To the north is a courtyard, to the east are stairs leading to the top of the wall. The western stairs are blocked.");
+        outer_courtyard = new Room("You find yourself in the outer courtyard of the castle. To the north is a raised drawbridge, to the east is an important-looking stone building, to the west is a wooden building.");
+        south_wall = new Room("You are standing on the castle's southern wall. From here you can see where you first arrived from. To the west is the stairs down the gatehouse, to the east is the south-east castle wall.");
+        se_wall = new Room("You're standing on the south-east wall, you can see a river flowing below. To the north is the north-east part of the wall and to the south is the southern wall.");
+        warehouse = new Room("You are in a run-down warehouse, there isn't much here, aside from some rats. To the west is a ladder.");
 
         // initialise room exits
         outside.setExit("west", training_ground);
+        outside.setExit("north", gatehouse);
         outside.addItem("Stick", stick);
-
         training_ground.setExit("east", outside);
-        training_ground.setConvo("trainerfirst");
+        training_ground.setConvo("trainerfirst");        
+        gatehouse.setExit("north", outer_courtyard);
+        gatehouse.setExit("east", south_wall);
+        south_wall.setExit("west", gatehouse);
+        south_wall.setExit("east", se_wall);
+        se_wall.setExit("south", south_wall);
 
         currentRoom = outside;  // start game outside     
     }    
@@ -98,7 +107,6 @@ public class Game
         trainaccept = new Convo("'Alright, let's see what you're made of!'");
         trainrefuse = new Convo("'It's your loss.' The soldier returns his attention to his equipment ending the conversation.");
         trainreturn = new Convo("'Ah, you return! Want to give it another go?'\nYes.\nNo.");
-        trainwin = new Convo("'Congratulations, you're pretty good. As promised, one of my spare swords. Put it to good use.'\nYou take the sword.");
 
         trainerfirst.setLink("a", traininterest);
         trainerfirst.setLink("b", traindisinterest);
@@ -135,12 +143,9 @@ public class Game
     {
         System.out.println();
         System.out.println("Welcome to the World of Zuul!");
-        System.out.println("Choose your language: " + "\n");
-
-        System.out.println("World of Zuul is a new adventure game.");
+        System.out.println("World of Zuul is a text adventure game.");
         System.out.println("Type 'start' if you'd like to start the game. Type 'help' for commands.");
         System.out.println();
-        //System.out.println(currentRoom.getLongDescription());
     }
 
     /**
@@ -215,6 +220,9 @@ public class Game
             else if (commandWord == CommandWord.TAKE) {
                 take(command);
             }
+            else if (commandWord == CommandWord.BACK) {
+                back();
+            }
         }
 
         return wantToQuit;
@@ -223,7 +231,7 @@ public class Game
     // implementations of user commands:
     private void start(){
         gameStart = true;
-        System.out.println(currentRoom.getLongDescription());
+        System.out.println(currentRoom.getShortDescription());
     }
 
     /**
@@ -233,11 +241,13 @@ public class Game
      */
     private void printHelp() 
     {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at a castle at midnight.");
-        System.out.println();
-        System.out.println("Your command words are:");
-        parser.showCommands();
+        System.out.println("To move to another area, type 'go [direction]'. To get the description of your current area type 'look', this also shows any items in the area.");
+        System.out.println("To take an item from an area type 'take [item]'. (Case-sensitive) Not specifying an item will make you take every item in the area.");
+        System.out.println("To check your inventory, simply type 'inventory' or 'bag'. To equip an item in your inventory type 'equip [item]'. (Case-sensitve)");
+        System.out.println("If there is someone to talk to, you can type 'talk' to begin a conversation.");
+        System.out.println("While in a conversation, you can type 'talk [response]' or 'say [response]' to progress the conversation.");
+        System.out.println("To go back to the area you were previously in, type 'back'. You repeat this command to backtrack through multiple areas.");
+        System.out.println("Finally, to end and quit the game, type 'quit'.");
     }
 
     /** 
@@ -261,6 +271,7 @@ public class Game
             System.out.println("Can't go there.");
         }
         else {
+            roomhistory.add(currentRoom);
             currentRoom = nextRoom;
             System.out.println(currentRoom.getShortDescription());
         }
@@ -461,7 +472,6 @@ public class Game
         else{
             System.out.println(fight.getAction("enemymiss"));
         }
-
     }
 
     private void winFight()
@@ -471,14 +481,18 @@ public class Game
         System.out.println("You gained " + fight.getXPGain() + " XP!");
         if(player.lvlCheck() == true){
             player.lvlUp();
+            currentHP += 1;
         }
         inFight = false;
         fight.resetTurn();
         if(currentRoom.getConvoType() == "trainreturn"){
-            Item oldsword = new Item("Shortsword", "A shortsword that's clearly seen a lot of use, though it seems it was well-maintained.\n+2 to damage.", "Weapon");
-            oldsword.setDam(2);
-            System.out.println(trainwin.getContent());
-            inventory.put("Shortsword", oldsword);
+            Item shortsword = new Item("Shortsword", "A shortsword that's clearly seen a lot of use, though it seems it was well-maintained.\n+2 to damage.", "Weapon");
+            shortsword.setDam(2);
+            System.out.println( "'Congratulations, you're pretty good. As promised, one of my spare swords. Put it to good use.'");
+            inventory.put("Shortsword", shortsword);
+            System.out.println("You take the sword.");
+            currentHP = player.getTotalHP();
+            System.out.println("Your health was restored.");
             currentRoom.unsetConvo();
             System.out.println(currentRoom.getShortDescription());
         }
@@ -528,6 +542,20 @@ public class Game
                     System.out.println("No " + gItem + " here.");
                 }
             }
+        }
+    }
+
+    private void back()
+    {
+        if(roomhistory.size() < 1){
+            System.out.println("Can't go back.");
+        }
+        else{
+            int index = roomhistory.size();
+            index -= 1;
+            currentRoom = roomhistory.get(index);
+            roomhistory.remove(index);
+            System.out.println(currentRoom.getShortDescription());
         }
     }
 }
