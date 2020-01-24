@@ -71,6 +71,7 @@ public class Game
         player = new Player();
         currentHP = player.getTotalHP();
         fight = new Fight();
+        language = Language.ENGLISH;
 
         Item ration = new Item("Ration", "A ration of food. Fully heals.", "Health");
         inventory.put("Ration", ration);
