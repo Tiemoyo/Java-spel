@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=Game
-comment0.text=\r\n\ \ This\ class\ is\ the\ main\ class\ of\ the\ "World\ of\ Zuul"\ application.\ \r\n\ \ "World\ of\ Zuul"\ is\ a\ very\ simple,\ text\ based\ adventure\ game.\ \ Users\ \r\n\ \ can\ walk\ around\ some\ scenery.\ That's\ all.\ It\ should\ really\ be\ extended\ \r\n\ \ to\ make\ it\ more\ interesting\!\r\n\ \r\n\ \ To\ play\ this\ game,\ create\ an\ instance\ of\ this\ class\ and\ call\ the\ "play"\r\n\ \ method.\r\n\ \r\n\ \ This\ main\ class\ creates\ and\ initialises\ all\ the\ others\:\ it\ creates\ all\r\n\ \ rooms,\ creates\ the\ parser\ and\ starts\ the\ game.\ \ It\ also\ evaluates\ and\r\n\ \ executes\ the\ commands\ that\ the\ parser\ returns.\r\n\ \r\n\ @author\ Quinten\ de\ Haan\r\n\ @author\ Tiemo\r\n\ @version\ 2020.01.24\r\n
+comment0.text=\r\n\ \ This\ class\ is\ the\ main\ class\ of\ the\ "World\ of\ Zuul"\ application.\ \r\n\ \ "World\ of\ Zuul"\ is\ a\ very\ simple,\ text\ based\ adventure\ game.\ \ Users\ \r\n\ \ can\ walk\ around\ some\ scenery.\ That's\ all.\ It\ should\ really\ be\ extended\ \r\n\ \ to\ make\ it\ more\ interesting\!\r\n\ \r\n\ \ To\ play\ this\ game,\ create\ an\ instance\ of\ this\ class\ and\ call\ the\ "play"\r\n\ \ method.\r\n\ \r\n\ \ This\ main\ class\ creates\ and\ initialises\ all\ the\ others\:\ it\ creates\ all\r\n\ \ rooms,\ creates\ the\ parser\ and\ starts\ the\ game.\ \ It\ also\ evaluates\ and\r\n\ \ executes\ the\ commands\ that\ the\ parser\ returns.\r\n\ \r\n\ @author\ \ Quinten\ de\ Haan\ &\ Tiemo\ Laban\r\n\ @version\ 2020.01.24\r\n
 comment1.params=
 comment1.target=Game()
 comment1.text=\r\n\ Create\ the\ game\ and\ initialise\ its\ internal\ map.\r\n
@@ -9,7 +9,7 @@ comment10.target=void\ printHelp()
 comment10.text=\r\n\ Print\ out\ some\ help\ information.\r\n\ It's\ not\ entirely\ complete.\r\n
 comment11.params=command
 comment11.target=void\ goRoom(Command)
-comment11.text=\ \r\n\ Try\ to\ in\ to\ one\ direction.\ If\ there\ is\ an\ exit,\ enter\ the\ new\r\n\ room,\ otherwise\ print\ an\ error\ message.\r\n
+comment11.text=\ \r\n\ Try\ to\ go\ to\ a\ direction.\ If\ there\ is\ an\ exit,\ enter\ the\ new\r\n\ room,\ otherwise\ print\ an\ error\ message.\r\n\ also\ some\ random\ battles\ are\ checked\ for\ here.\r\n
 comment12.params=
 comment12.target=void\ trapdoor()
 comment12.text=\r\n\ checks\ whether\ the\ room\ has\ a\ trapdoor,\ if\ so,\ it\ gets\ activated.\r\n
@@ -67,7 +67,7 @@ comment7.target=java.lang.String\ getFromSL(SLe)
 comment7.text=\r\n\ Gets\ strings\ from\ a\ string\ library\ based\ on\ the\ language\ of\ the\ game.\r\n
 comment8.params=command
 comment8.target=boolean\ processCommand(Command)
-comment8.text=\r\n\ Given\ a\ command,\ process\ (that\ is\:\ execute)\ the\ command.\r\n\ @param\ command\ The\ command\ to\ be\ processed.\r\n\ @return\ true\ If\ the\ command\ ends\ the\ game,\ false\ otherwise.\r\n
+comment8.text=\r\n\r\n\ \ \ \ /**\r\n\ Given\ a\ command,\ process\ (that\ is\:\ execute)\ the\ command.\r\n\ @param\ command\ The\ command\ to\ be\ processed.\r\n\ @return\ true\ If\ the\ command\ ends\ the\ game,\ false\ otherwise.\r\n
 comment9.params=
 comment9.target=void\ start()
 comment9.text=\r\n\ Signals\ the\ game\ has\ started,\ and\ gives\ the\ description\ of\ the\ starting\ room.\r\n

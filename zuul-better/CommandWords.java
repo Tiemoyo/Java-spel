@@ -16,16 +16,19 @@ public class CommandWords
 {
     // A mapping between a command word and the CommandWord
     // associated with it.
+
     private HashMap<String, CommandWord> validCommandsEN;
     private HashMap<String, CommandWord> validCommandsNL;
     private Parser parser;
     private Language language;
+
 
     /**
      * Constructor - initialise the command words.
      */
     public CommandWords()
     {
+
         validCommandsEN = new HashMap<>();
         validCommandsNL = new HashMap<>();
         validCommandsEN.put("1", CommandWord.LANGEN);
@@ -105,9 +108,10 @@ public class CommandWords
         }
         else {
             return CommandWord.UNKNOWN;
+
         }
     }
-
+    
     /**
      * Check whether a given String is a valid command word. 
      * @return true if it is, false if it isn't.
@@ -135,6 +139,7 @@ public class CommandWords
     /*
     public void showAll() 
     {
+
     for(String command : validCommands.keySet()) {
     System.out.print(command + "  ");
     }

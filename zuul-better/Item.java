@@ -1,10 +1,9 @@
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
  * Write a description of class Item here.
  *
+<<<<<<< HEAD
  * @author Quinten de Haan
  * @author Tiemo
  * @version 2020.01.22
@@ -107,3 +106,27 @@ public class Item
         hp = points;
     }
 }
+=======
+ * @author (Quinten de Haan)
+ * @version (1.0)
+ */
+public class Item
+{
+ private String description;
+
+ 
+ public Item(String newdescription)
+ {   
+     
+     description = newdescription;
+     
+     
+     
+     
+} 
+public String getDescription()
+{
+    return description;
+}
+}
+>>>>>>> master

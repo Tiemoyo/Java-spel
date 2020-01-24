@@ -1,5 +1,6 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+
+import java.util.*;
+
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -13,8 +14,7 @@ import java.util.HashMap;
  *  rooms, creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
  * 
- * @author Quinten de Haan
- * @author Tiemo
+ * @author  Quinten de Haan & Tiemo Laban
  * @version 2020.01.24
  */
 
@@ -74,8 +74,6 @@ public class Game
 
         Item ration = new Item("Ration", "A ration of food. Fully heals.", "Health");
         inventory.put("Ration", ration);
-
-        createRooms();
     }
 
     /**
@@ -280,7 +278,10 @@ public class Game
             string = SL.enstrings.get(sle);
         }
         return string;
+
     }
+
+    /*
 
     /**
      * Given a command, process (that is: execute) the command.
@@ -290,6 +291,7 @@ public class Game
     private boolean processCommand(Command command) 
     {
         boolean wantToQuit = false;
+
         CommandWord commandWord = command.getCommandWord();
 
         switch(commandWord){
@@ -468,13 +470,15 @@ public class Game
     }
 
     /** 
-     * Try to in to one direction. If there is an exit, enter the new
+     * Try to go to a direction. If there is an exit, enter the new
      * room, otherwise print an error message.
+     * also some random battles are checked for here.
      */
     private void goRoom(Command command) 
     {
         if(!command.hasSecondWord()){
             // if there is no second word, we don't know where to go...
+
             switch(language){
                 case ENGLISH:
                 System.out.println("Go where?");
@@ -1123,4 +1127,5 @@ public class Game
             System.out.println(currentRoom.getShortDescription());
         }
     }
+
 }
