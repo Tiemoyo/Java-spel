@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=SL
+comment0.text=\r\n\ Stores\ strings\ for\ different\ languages\ to\ be\ used\ in\ the\ game.\r\n\r\n\ @author\ Quinten\ de\ Haan\r\n\ @version\ 2020.1.24\r\n
+comment1.params=
+comment1.target=SL()
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ SL\r\n
+numComments=2

@@ -13,15 +13,20 @@
  *
  * If the command had only one word, then the second word is <null>.
  * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author Quinten de Haan
+ * @author Tiemo
+ * @version 2020.01.22
  */
 
 public class Command
 {
     private CommandWord commandWord;
     private String secondWord;
+<<<<<<< HEAD
+    
+=======
 
+>>>>>>> master
     /**
      * Create a command object. First and second words must be supplied, but
      * the second may be null.
