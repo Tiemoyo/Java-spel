@@ -33,11 +33,13 @@ public class CommandWords
         validCommandsEN.put("1", CommandWord.LANGEN);
         validCommandsEN.put("2", CommandWord.LANGNL);
         validCommandsEN.put("start", CommandWord.START);
+        validCommandsNL.put("start", CommandWord.START);
 
         validCommandsEN.put("go", CommandWord.GO);
         validCommandsNL.put("ga", CommandWord.GO);
 
         validCommandsEN.put("help", CommandWord.HELP);
+        validCommandsNL.put("help", CommandWord.HELP);
 
         validCommandsEN.put("quit", CommandWord.QUIT);
         validCommandsNL.put("afsluiten", CommandWord.QUIT);
