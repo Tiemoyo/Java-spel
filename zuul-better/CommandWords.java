@@ -28,7 +28,6 @@ public class CommandWords
      */
     public CommandWords()
     {
-
         validCommandsEN = new HashMap<>();
         validCommandsNL = new HashMap<>();
         validCommandsEN.put("1", CommandWord.LANGEN);

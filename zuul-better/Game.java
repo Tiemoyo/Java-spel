@@ -54,7 +54,7 @@ public class Game
      */
     public Game() 
     {
-        createRooms();
+        language = Language.ENGLISH;        
         storeConvos();
         parser = new Parser();
         parser.setLang(1);
@@ -71,7 +71,7 @@ public class Game
         player = new Player();
         currentHP = player.getTotalHP();
         fight = new Fight();
-        language = Language.ENGLISH;
+        createRooms();
 
         Item ration = new Item("Ration", "A ration of food. Fully heals.", "Health");
         inventory.put("Ration", ration);
@@ -315,12 +315,14 @@ public class Game
                 parser.setLang(1);
                 language = Language.ENGLISH;
                 printWelcome();
+                langSet = true;
                 break;
 
                 case LANGNL:
                 parser.setLang(2);
                 language = Language.NEDERLANDS;
                 printWelcome();
+                langSet = true;
                 break;
             }
         }
