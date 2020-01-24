@@ -15,21 +15,27 @@ import java.util.HashMap;
  * 
  * @author Quinten de Haan
  * @author Tiemo
- * @version 2020.01.22
+ * @version 2020.01.24
  */
 
 public class Game 
 {
     private Parser parser;
     private Room currentRoom;
+    private Room teleportRoom;
+    private SL SL;
     private boolean inConvo;
     private boolean gameStart;
     private boolean inFight;
     private boolean gameOver;
+    private boolean langSet;
+    private boolean boss;
+    private boolean trap;
     private Convo currentConvo;
     private HashMap<String, Item> inventory;
     private HashMap<String, Item> equipment;
     private ArrayList<Room> roomhistory;
+    private Language language;
 
     private int currentHP;
     private Player player;
@@ -51,11 +57,14 @@ public class Game
         createRooms();
         storeConvos();
         parser = new Parser();
+        parser.setLang(1);
+        SL = new SL();
         inConvo = false;
         gameStart = false;
         inFight = false;
         gameOver = false;
-        parser = new Parser();
+        langSet = false;
+        trap = true;
         inventory = new HashMap<String, Item>();
         equipment = new HashMap<String, Item>();
         roomhistory = new ArrayList<Room>();
@@ -74,7 +83,8 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, training_ground, gatehouse, outer_courtyard, inner_courtyard, warehouse, warehousebedroom, south_wall, se_wall, ne_wall, north_wall, armory, west_wall, nw_wall, tower;
+        Room outside, training_ground, gatehouse, outer_courtyard, inner_courtyard, warehouse, warehousebedroom, south_wall, se_wall, ne_wall, north_wall, armory, west_wall, nw_wall, tower,
+        keep, throne;
 
         Item stick = new Item("Stick", "A sturdy wooden tree branch.\n+1 Damage.", "Weapon");
         Item tunic = new Item("Tunic", "A sturdy tunic that protects against damage.\n+1 Armor.", "Armor");
@@ -83,29 +93,43 @@ public class Game
         Item bread = new Item("Bread", "A loaf of bread. Fully heals.", "Health");
         Item innerkey = new Item("InnerKey", "A key to access the inner walls of the castle.", "Key1");
         Item keychain = new Item("Keychain", "Several keys on  chain, includes keys for guard towers.", "Key2");
+        Item beamer = new Item("Teleporter", "Stores a location allowing you to teleport to it.", "Teleport");
+        Item longsword = new Item("Longsword", "A well-crafted longsword.\n+5 Damage.", "Weapon");
+        Item suit = new Item("Armorsuit", "A full suit of armor that protects against damage.\n+5 Armor.", "Armor");
+        Item kite = new Item("Kiteshield", "A kite shield.\n+2 Shield.", "Shield");
+        Item water = new Item("Water", "water", "Health");
+        longsword.setDam(5);
+        suit.setArmor(5);
+        kite.setShield(2);
         stick.setDam(1);
         tunic.setArmor(1);
         buckler.setShield(1);
 
         // create the rooms
-        outside = new Room("You stand before the intimidating dark castle. To the north is a drawbridge leading to the castle gate, to the west is a training ground.");
-        training_ground = new Room("You are in a training ground next to the castle's ruined western wall. There is an old soldier tending to his equipment. To the east is the castle gate.");
-        gatehouse = new Room("You are inside the gatehouse of the outer wall. To the north is a courtyard, to the east are stairs leading to the top of the wall. The western stairs are blocked.");
-        outer_courtyard = new Room("You find yourself in the outer courtyard of the castle. To the north is a raised drawbridge, to the east is a stone building, to the west is a wooden building, to the south is the gatehouse.");
-        south_wall = new Room("You are standing on the castle's southern wall. From here you can see where you first arrived from. To the west is the stairs down the gatehouse, to the east is the south-east castle wall.");
-        se_wall = new Room("You're standing on the south-east wall, you can see a river flowing below. To the north is the north-east part of the wall and to the south is the southern wall.");
-        ne_wall = new Room("You are on the north-east wall, you can see a mountain in the distance. To the west the wall connects to the inner castle wall, to the south is the south-eastern wall.");
-        north_wall = new Room("You are on the north part of the wall connecting to the inner wall. To the west is a door leading to the inner courtyard, to the east is the north-east wall.");
-        small_room = new Room("You find yourself in a small room with some stuff lying around. Above you is the trapdoor you fell through, too high to climb through. To the south is a door.");
-        armory = new Room("You are in the castle's armoury. Unfortunately, it seems there's not much of value left. To the north is a small room, to the west is a now-unlocked door.");
-        inner_courtyard = new Room("WIP");
-        warehouse = new Room("You are in a run-down warehouse, there isn't much here, aside from some rats. To the west is a ladder to a higher floor.");
-        warehousebedroom = new Room("You are on the second floor of the warehouse. Someone made a bedroom of sorts here, leaving their belongings. To the east is the ladder down, west is a window that leads to the western wall.");
-        west_wall = new Room("You're standing on the western wall. Most of the western walls have crumbled but this section is still standing. To the east is the warehouse window, to the north the wall continues.");
-        nw_wall = new Room("You are on the north-west wall. There is a guard tower to the north, to the south the western wall continues.");
-        tower = new Room("You are in the western guard tower. You can see all of the surroundings from here, including the inner courtyard. To the south is the door to the western wall.");
+        outside = new Room(getFromSL(SLe.R_OUTSIDE));
+        training_ground = new Room(getFromSL(SLe.R_TRAIN));
+        gatehouse = new Room(getFromSL(SLe.R_GATE));
+        outer_courtyard = new Room(getFromSL(SLe.R_OUTYARD));
+        south_wall = new Room(getFromSL(SLe.R_SWALL));
+        se_wall = new Room(getFromSL(SLe.R_SEWALL));
+        ne_wall = new Room(getFromSL(SLe.R_NEWALL));
+        north_wall = new Room(getFromSL(SLe.R_NWALL));
+        small_room = new Room(getFromSL(SLe.R_SMALL));
+        armory = new Room(getFromSL(SLe.R_ARM));        
+        warehouse = new Room(getFromSL(SLe.R_WHOUSE));
+        warehousebedroom = new Room(getFromSL(SLe.R_WHBED));
+        west_wall = new Room(getFromSL(SLe.R_WWALL));
+        nw_wall = new Room(getFromSL(SLe.R_NWWALL));
+        tower = new Room(getFromSL(SLe.R_TOWER));
+        inner_courtyard = new Room(getFromSL(SLe.R_INYARD));
+        keep = new Room("The keep, has some items you'll need. North is the throne room, south is back to the courtyard.");
+        throne = new Room("");
 
         // initialise room exits
+        inner_courtyard.setExit("east", north_wall);
+        inner_courtyard.setExit("north", keep);
+        keep.setExit("south", inner_courtyard);
+        keep.setExit("north", throne);
         outside.setExit("west", training_ground);
         outside.setExit("north", gatehouse);
         training_ground.setExit("east", outside);
@@ -139,15 +163,21 @@ public class Game
         small_room.addItem("Tunic", tunic);
         small_room.addItem("Bandages", bandages);
         armory.addItem("Keychain", keychain);
+        north_wall.addItem("Teleporter", beamer);
         warehousebedroom.addItem("Bread", bread);
         warehousebedroom.addItem("Buckler", buckler);
         tower.addItem("InnerKey", innerkey);
+        keep.addItem("Longsword", longsword);
+        keep.addItem("Armorsuit", suit);
+        keep.addItem("Kiteshield", kite);
+        keep.addItem("Water", water);
 
         inner_courtyard.isLocked();
         armory.isLocked();
         tower.isLocked();
 
         outer_courtyard.setBattle("randomguard");
+        inner_courtyard.setBattle("randomguard");
         south_wall.setBattle("randomguard");
         se_wall.setBattle("randomguard");
         ne_wall.setBattle("randomguard");
@@ -155,12 +185,21 @@ public class Game
         west_wall.setBattle("randomguard");
         nw_wall.setBattle("randomguard");
         warehouse.setBattle("randomrat");
-        armory.setBattle("rogue");
-        tower.setBattle("captain");
+        warehousebedroom.setBattle("randomrat");
+        armory.setBattle("randomguard");
+        small_room.setBattle("randomrat");
+        tower.setBattle("randomguard");
+        keep.setBattle("randomguard");
+        throne.setBattle("boss");
 
         currentRoom = outside;  // start game outside     
     }    
 
+    /**
+     * 
+     * Creates conversation trees for the game.
+     * 
+     */
     private void storeConvos()
 
     {
@@ -189,7 +228,7 @@ public class Game
      */
     public void play() 
     {            
-        printWelcome();
+        chooseLanguage();
 
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.
@@ -203,15 +242,44 @@ public class Game
     }
 
     /**
+     * Here the player chooses their language.
+     */
+    private void chooseLanguage()
+    {
+        System.out.println();
+        System.out.println("Select a language/Selecteer een taal.");
+        System.out.println("1. English.");
+        System.out.println("2. Nederlands.");
+        System.out.println();
+    }
+
+    /**
      * Print out the opening message for the player.
      */
     private void printWelcome()
     {
-        System.out.println();
-        System.out.println("Welcome to the World of Zuul!");
-        System.out.println("World of Zuul is a text adventure game.");
-        System.out.println("Type 'start' if you'd like to start the game. Type 'help' for commands.");
-        System.out.println();
+        System.out.print(getFromSL(SLe.WELCOME));
+    }
+
+    /**
+     * Gets strings from a string library based on the language of the game.
+     */
+    private String getFromSL(SLe sle)
+    {
+        String string;
+        switch(language){
+            case ENGLISH:
+            string = SL.enstrings.get(sle);
+            break;
+
+            case NEDERLANDS:
+            string = SL.nlstrings.get(sle);
+            break;
+
+            default:
+            string = SL.enstrings.get(sle);
+        }
+        return string;
     }
 
     /**
@@ -224,97 +292,161 @@ public class Game
         boolean wantToQuit = false;
         CommandWord commandWord = command.getCommandWord();
 
-        if(commandWord == CommandWord.UNKNOWN) {
-            System.out.println("I don't know what you mean...");
-            return false;
-        }        
-        else if (commandWord == CommandWord.HELP) {
+        switch(commandWord){
+            case UNKNOWN:
+            System.out.print(getFromSL(SLe.WHAT));
+            break;
+
+            case HELP:
             printHelp();
-        }
-        else if (commandWord == CommandWord.QUIT) {
+            break;
+
+            case QUIT:
             wantToQuit = quit(command);
+            break;
+        }
+
+        if(langSet == false){
+            switch(commandWord){
+                case LANGEN:
+                parser.setLang(1);
+                language = Language.ENGLISH;
+                printWelcome();
+                break;
+
+                case LANGNL:
+                parser.setLang(2);
+                language = Language.NEDERLANDS;
+                printWelcome();
+                break;
+            }
         }
         else if(gameStart == false){
-            if(commandWord == CommandWord.START){
+            switch(commandWord){
+                case START:
                 start();
-            }
-            else{
+                break;
+
+                case ABOUT:
+                System.out.println("This is a project by Quinten en Tiemo.");
+                break;
+
+                default:
                 System.out.println("Game has not started yet.");
             }
         }
         else if(inConvo == true){
-            if (commandWord == CommandWord.TALK) {
+            switch(commandWord){
+                case TALK:
                 talk(command);
-            }
-            else{
+                break;
+
+                default:
                 System.out.println("Can't do that while in conversation.");
             }
         }
         else if(inFight == true){
-            if(commandWord == CommandWord.ATT){
+            switch(commandWord){
+                case ATT:
                 attack();
-            }
-            else if (commandWord == CommandWord.INV){
+                break;
+
+                case INV:
                 printInventory();
-            }
-            else if (commandWord == CommandWord.STAT) {
+                break;
+
+                case STAT:
                 printStats();
-            }
-            else{
+                break;
+
+                default:
                 System.out.println("Can't do that while fighting.");
             }
         }
         else if(gameOver == true){
             if (commandWord != CommandWord.QUIT) {
-                System.out.println("The game is over, you can only quit the game now.");
+                switch(language){
+                    case ENGLISH:
+                    System.out.println("The game is over, you can only quit the game now.");
+                    break;
+                    case NEDERLANDS:
+                    System.out.println("Het spel is over, je kan nu alleen het spel afsluiten.");
+                    break;
+                }
             }
         }
-        else{          
-            if (commandWord == CommandWord.GO) {
+        else{
+            switch(commandWord){
+                case GO:
                 goRoom(command);
-            }
-            else if (commandWord == CommandWord.LOOK) {
-                look();
-            }
-            else if (commandWord == CommandWord.TALK) {
-                talk(command);
-            }
-            else if (commandWord == CommandWord.START) {
-                System.out.println("Game has already started");  
-            }
-            else if (commandWord == CommandWord.INV){
-                printInventory();
-            }
-            else if (commandWord == CommandWord.ATT) {
-                System.out.println("Not in battle.");  
-            }
-            else if (commandWord == CommandWord.EQP) {
-                equipItem(command);
-            }
-            else if (commandWord == CommandWord.TAKE) {
-                take(command);
-            }
-            else if (commandWord == CommandWord.STAT) {
-                printStats();
-            }
-            else if (commandWord == CommandWord.BACK) {
-                back();
-            }
-            else if (commandWord == CommandWord.ITEM) {
-                printItem(command);
-            }
-            else if (commandWord == CommandWord.USE) {
-                useItem(command);
-            }
-            else if (commandWord == CommandWord.DROP) {
-                dropItem(command);
-            }
-        }
+                break;
 
+                case TALK:
+                talk(command);
+                break;
+
+                case START:
+                switch(language){
+                    case ENGLISH:
+                    System.out.println("Game has already started");
+                    break;
+                    case NEDERLANDS:
+                    System.out.println("Spel is al begonnen.");
+                    break;
+                }
+                break;
+
+                case INV:
+                printInventory();
+                break;
+
+                case ATT:
+                switch(language){
+                    case ENGLISH:
+                    System.out.println("Not in fight.");
+                    break;
+                    case NEDERLANDS:
+                    System.out.println("Niet in gevecht.");
+                    break;
+                }
+                break;
+
+                case EQP:
+                equipItem(command);
+                break;
+
+                case TAKE:
+                take(command);
+                break;
+
+                case STAT:
+                printStats();
+                break;
+
+                case BACK:
+                back();
+                break;
+
+                case ITEM:
+                printItem(command);
+                break;
+
+                case USE:
+                useItem(command);
+                break;
+
+                case DROP:
+                dropItem(command);
+                break;
+            }          
+        }
         return wantToQuit;
     }
 
     // implementations of user commands:
+    /**
+     * Signals the game has started, and gives the description of the starting room.
+     */
     private void start(){
         gameStart = true;
         System.out.println(currentRoom.getShortDescription());
@@ -322,8 +454,7 @@ public class Game
 
     /**
      * Print out some help information.
-     * Here we print some stupid, cryptic message and a list of the 
-     * command words.
+     * It's not entirely complete.
      */
     private void printHelp() 
     {
@@ -344,7 +475,14 @@ public class Game
     {
         if(!command.hasSecondWord()){
             // if there is no second word, we don't know where to go...
-            System.out.println("Go where?");
+            switch(language){
+                case ENGLISH:
+                System.out.println("Go where?");
+                break;
+                case NEDERLANDS:
+                System.out.println("Ga waarheen?");
+                break;
+            }
             return;
         }
 
@@ -354,13 +492,34 @@ public class Game
         Room nextRoom = currentRoom.getExit(direction);
 
         if(nextRoom == null){
-            System.out.println("Can't go there.");
+            switch(language){
+                case ENGLISH:
+                System.out.println("Can't go there.");
+                break;
+                case NEDERLANDS:
+                System.out.println("Kan daar niet heen gaan.");
+                break;
+            }
         }
         else if(direction == "trapdoor"){
-            System.out.println("Trapdoor?");
+            switch(language){
+                case ENGLISH:
+                System.out.println("Trapdoor?");
+                break;
+                case NEDERLANDS:
+                System.out.println("Valluik?");
+                break;
+            }
         }
         else if(nextRoom.getLock() == true){
-            System.out.println("Locked, can't go there.");
+            switch(language){
+                case ENGLISH:
+                System.out.println("Locked, can't go there.");
+                break;
+                case NEDERLANDS:
+                System.out.println("Op slot, kan daar niet heen gaan.");
+                break;
+            }
             trapdoor();
         }
         else{
@@ -382,24 +541,38 @@ public class Game
                         System.out.println(fight.getAction("randomrat"));
                     } 
                 }
+                else if(currentRoom.getBattleType() == "boss"){
+
+                    inFight = true;
+                    boss = true;
+                    fight.setEnemyHP(50);
+                    fight.setEnemyDam(7);
+                    fight.setXPGain(100);
+                    System.out.println("You prepare to face the king!");
+
+                }
             }
         }
     }
 
+    /**
+     * checks whether the room has a trapdoor, if so, it gets activated.
+     */
     private void trapdoor(){
         Room nextRoom = currentRoom.getExit("trapdoor");
-        if(nextRoom != null){
-            System.out.println("You notice the keyhole for the door seems rather intricate. As you inspect it, you suddenly feel the ground beneath you give way!");
-            System.out.println("You fell through a trapdoor!");
-            currentRoom.setDescription("You are on the north part of the wall connecting to the inner wall. To the west is a door leading to the inner courtyard, to the east is the north-east wall. There is also a trapdoor you fell through earlier.");            
-            //currentRoom.setExit("down", small_room);
-            currentRoom = nextRoom;
-            roomhistory.clear();
-            nextRoom = currentRoom.getExit("south");
-            nextRoom.isUnlocked();
-            System.out.println(currentRoom.getShortDescription());
-        }
-        else{
+        if(trap = true){
+            if(nextRoom != null){
+                System.out.println("You notice the keyhole for the door seems rather intricate. As you inspect it, you suddenly feel the ground beneath you give way!");
+                System.out.println("You fell through a trapdoor!");
+                currentRoom.setDescription("You are on the north part of the wall connecting to the inner wall. To the west is a door leading to the inner courtyard, to the east is the north-east wall. There is also a trapdoor you fell through earlier.");            
+                //currentRoom.setExit("down", small_room);
+                currentRoom = nextRoom;
+                roomhistory.clear();
+                nextRoom = currentRoom.getExit("south");
+                nextRoom.isUnlocked();
+                System.out.println(currentRoom.getShortDescription());
+                trap = false;
+            }
         }
     }
 
@@ -409,36 +582,81 @@ public class Game
     private void printInventory() 
     {
         if (inventory.size() == 0) {
-            System.out.println("You are not carrying anything.");
+            switch(language){
+                case ENGLISH:
+                System.out.println("You have nothing in your inventory.");
+                break;
+                case NEDERLANDS:
+                System.out.println("Je hebt niets in je inventaris.");
+                break;
+            }            
         }
         else {
-            System.out.println("You have the following:");
+            switch(language){
+                case ENGLISH:
+                System.out.println("You have the following:");
+                break;
+                case NEDERLANDS:
+                System.out.println("Jij hebt het volgende:");
+                break;
+            }            
             for (String i : inventory.keySet()) {
                 Item item = inventory.get(i);
                 System.out.print(item.getName());
                 if(item.getEquip() == true){
-                    System.out.print(" [Equipped]");
+                    switch(language){
+                        case ENGLISH:
+                        System.out.println(" [Equipped]");
+                        break;
+                        case NEDERLANDS:
+                        System.out.println(" [Gewapend]");
+                        break;
+                    }
                 }
                 System.out.print("\n");
             }
         }
     }
 
+    /**
+     * 
+     * Prints out the description of the item, or throws an "error" when specified items wasn't found.
+     * 
+     */
     private void printItem(Command command) 
     {
         if(!command.hasSecondWord()) {          
-            System.out.println("Look at what item?");
+            switch(language){
+                case ENGLISH:
+                System.out.println("Look at what item?");
+                break;
+                case NEDERLANDS:
+                System.out.println("Kijk naar welk item?");
+                break;
+            }
             return;
         }
         String gItem = command.getSecondWord();
         if(inventory.get(gItem) == null){
-            System.out.println("You don't have that item.");
+            switch(language){
+                case ENGLISH:
+                System.out.println("You don't have that item.");
+                break;
+                case NEDERLANDS:
+                System.out.println("You hebt dat item niet.");
+                break;
+            }
             return;
         }
         Item item = inventory.get(gItem);   
         System.out.println(item.getDescription());
     }
 
+    /**
+     * 
+     * Prints out the players current stats, like their remaining/total HP, level, etc.
+     * 
+     */
     private void printStats() 
     {
         int xp = player.getXP();
@@ -462,43 +680,88 @@ public class Game
             xpcap = 100;
         }
         System.out.println();
-        System.out.println("You are a level " + player.getlvl() + " hero.");
+        System.out.println("Level: " + player.getlvl());
         System.out.println();
-        System.out.println("You have " + currentHP + "/" + player.getTotalHP() + " HP.");
-        System.out.println("You have " + xp + "/" + xpcap + " XP.");
-        System.out.println("You have " + player.getStr() + " Strength.");
-        System.out.println("You have " + player.getDex() + " Dexterity.");
-        System.out.println("You have " + player.getEnd() + " Endurance.");
+        System.out.println("HP: " + currentHP + "/" + player.getTotalHP());
+        System.out.println("XP: " + xp + "/" + xpcap);
+        System.out.println("STR: " + player.getStr());
+        System.out.println("DEX: " + player.getDex());
+        System.out.println("END: " + player.getEnd());
         System.out.println();
-        System.out.println("You can deal " + player.getDamage() + " Damage.");
-        System.out.println("You have " + player.getArmor() + " Armor");
-        System.out.println("You can carry " + inventory.size() + "/" + player.getInvSpace() + " items");
+        System.out.println("DAM: " + player.getDamage());
+        System.out.println("ARM: " + player.getArmor());
+        System.out.println("INV: " + inventory.size() + "/" + player.getInvSpace());
         System.out.println();
     }
 
+    /**
+     * 
+     * Looks for an item with an appropriate type, then uses it and removes it from the player's reach.
+     * 
+     */
     private void useItem(Command command) 
     {
-        if(!command.hasSecondWord()) {          
-            System.out.println("Use what?");
+        if(!command.hasSecondWord()) {
+            switch(language){
+                case ENGLISH:
+                System.out.println("Use what?");
+                break;
+                case NEDERLANDS:
+                System.out.println("Gebruik wat?");
+                break;
+            }
             return;
         }
         String gItem = command.getSecondWord();
         if(inventory.get(gItem) == null){
-            System.out.println("You don't have that item.");
+            switch(language){
+                case ENGLISH:
+                System.out.println("You don't have that item.");
+                break;
+                case NEDERLANDS:
+                System.out.println("You hebt dat item niet.");
+                break;
+            }
             return;
         }
         Item item = inventory.get(gItem);   
         if(item.getType() == "Health"){
             currentHP = player.getTotalHP();
             inventory.remove(gItem);
-            System.out.println("Consumed " + gItem + ". Health restored.");
+            switch(language){
+                case ENGLISH:
+                System.out.println("Consumed " + gItem + ". HP restored.");
+                break;
+                case NEDERLANDS:
+                System.out.println(gItem + " Gebruikt. HP vol.");
+                break;
+            }
+        }
+        else if(item.getType() == "Teleporter"){
+            if(teleportRoom == null){
+                teleportRoom = currentRoom;
+                System.out.println("Teleport set.");
+            }
+            else{
+                currentRoom = teleportRoom;
+                System.out.println(currentRoom.getShortDescription());
+                System.out.println("Teleport unset.");
+                teleportRoom = null;              
+            }
         }
         else if(item.getType() == "Key1"){
             Room nextRoom = currentRoom.getExit("west");
             if(nextRoom.getLock()){
                 nextRoom.isUnlocked();
                 inventory.remove(gItem);
-                System.out.println("You unlocked the door to the inner courtyard. Key thrown away.");
+                switch(language){
+                    case ENGLISH:
+                    System.out.println("You unlocked the door to the inner courtyard. Key thrown away.");
+                    break;
+                    case NEDERLANDS:
+                    System.out.println("Deur tot de binnenplaats geopened. Sleutel weggegooid.");
+                    break;
+                }
             }
         }
         else if(item.getType() == "Key2"){
@@ -506,20 +769,56 @@ public class Game
             if(nextRoom.getLock()){
                 nextRoom.isUnlocked();
                 inventory.remove(gItem);
-                System.out.println("You unlocked the door to the tower. Keychain thrown away.");
+                switch(language){
+                    case ENGLISH:
+                    System.out.println("You unlocked the door to the tower. Keychain thrown away.");
+                    break;
+                    case NEDERLANDS:
+                    System.out.println("Deur tot de toren geopened. Sleutelbos weggegooid.");
+                    break;
+                }                
+            }
+        }
+        else{
+            switch(language){
+                case ENGLISH:
+                System.out.println("Item not usable.");
+                break;
+                case NEDERLANDS:
+                System.out.println("Item niet bruikbaar.");
+                break;
             }
         }
     }
 
+    /**
+     * 
+     * Removes the specified item from the player's inventory, and adds it the current room. Item is also unequipped if it was equipped before.
+     * 
+     */
     private void dropItem(Command command) 
     {
         if(!command.hasSecondWord()) {          
-            System.out.println("Drop what?");
+            switch(language){
+                case ENGLISH:
+                System.out.println("Drop what?");
+                break;
+                case NEDERLANDS:
+                System.out.println("Zet what neer?");
+                break;
+            }
             return;
         }
         String gItem = command.getSecondWord();
         if(inventory.get(gItem) == null){
-            System.out.println("You don't have that item.");
+            switch(language){
+                case ENGLISH:
+                System.out.println("You don't have that item.");
+                break;
+                case NEDERLANDS:
+                System.out.println("You hebt dat item niet.");
+                break;
+            }
             return;
         }
         Item item = inventory.get(gItem);
@@ -746,6 +1045,10 @@ public class Game
             System.out.println("Your health was restored.");
             currentRoom.unsetConvo();
             System.out.println(currentRoom.getShortDescription());
+        }
+        else if(boss){
+            System.out.println("You have slain the evil king! Rejoice in your victory!\nGAME OVER");
+            gameOver = true;        
         }
     }
 

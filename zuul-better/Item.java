@@ -19,6 +19,7 @@ public class Item
     private int armor;
     private int hp;
     private int shield;
+    private int weight;
 
     public Item(String iname, String idescription, String itype)
     {   
@@ -28,7 +29,8 @@ public class Item
         this.type = itype;
         
         isEquipped = false;
-
+        
+        weight = 1;
         damage = 0;
         armor = 0;
         hp = 0;
