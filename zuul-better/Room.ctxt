@@ -4,7 +4,6 @@ comment0.text=\r\n\ Class\ Room\ -\ a\ room\ in\ an\ adventure\ game.\r\n\r\n\ T
 comment1.params=description
 comment1.target=Room(java.lang.String)
 comment1.text=\r\n\ Create\ a\ room\ described\ "description".\ Initially,\ it\ has\r\n\ no\ exits.\ "description"\ is\ something\ like\ "a\ kitchen"\ or\r\n\ "an\ open\ court\ yard".\r\n\ @param\ description\ The\ room's\ description.\r\n
-<<<<<<< HEAD
 comment10.params=
 comment10.target=java.lang.String\ getExitString()
 comment10.text=\r\n\ Return\ a\ string\ describing\ the\ room's\ exits,\ for\ example\r\n\ "Exits\:\ north\ west".\r\n\ @return\ Details\ of\ the\ room's\ exits.\r\n
@@ -28,22 +27,6 @@ comment18.params=
 comment18.target=java.lang.String\ getBattleType()
 comment19.params=type
 comment19.target=void\ setBattle(java.lang.String)
-=======
-comment10.params=index
-comment10.target=Item\ getItem(int)
-comment10.text=\ \ \ \r\n\ \ \ Get\ item\ from\ the\ room\r\n
-comment11.params=newitem
-comment11.target=void\ setItem(Item)
-comment11.text=\ \ \ \r\n\ \ \ Set\ an\ item\ in\ the\ room\r\n
-comment12.params=
-comment12.target=java.lang.String\ getRoomItems()
-comment12.text=\ \ \ \r\n\ \ \ Get\ a\ description\ of\ the\ items\ in\ the\ room\r\n
-comment13.params=itemName
-comment13.target=Item\ getItem(java.lang.String)
-comment13.text=\ \ \ \r\n\ \ \ Get\ item\ from\ the\ room\r\n
-comment14.params=itemName
-comment14.target=void\ removeItem(java.lang.String)
->>>>>>> master
 comment2.params=direction\ neighbor
 comment2.target=void\ setExit(java.lang.String,\ Room)
 comment2.text=\r\n\ Define\ an\ exit\ from\ this\ room.\r\n\ @param\ direction\ The\ direction\ of\ the\ exit.\r\n\ @param\ neighbor\ \ The\ room\ to\ which\ the\ exit\ leads.\r\n
@@ -58,15 +41,8 @@ comment6.target=void\ addItem(java.lang.String,\ Item)
 comment7.params=
 comment7.target=java.lang.String\ getItems()
 comment8.params=
-<<<<<<< HEAD
 comment8.target=java.lang.String\ getShortDescription()
 comment8.text=\r\n\ @return\ The\ short\ description\ of\ the\ room\r\n\ (the\ one\ that\ was\ defined\ in\ the\ constructor).\r\n
 comment9.params=des
 comment9.target=void\ setDescription(java.lang.String)
 numComments=20
-=======
-comment8.target=java.lang.String\ getConvoType()
-comment9.params=type
-comment9.target=void\ setConvo(java.lang.String)
-numComments=15
->>>>>>> master
