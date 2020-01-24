@@ -3,8 +3,8 @@
  *
  * Write a description of class Item here.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author (Quinten de Haan)
+ * @version (1.0)
  */
 public class Item
 {
