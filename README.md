@@ -1,3 +1,3 @@
 # Java-spel
 
-Klik op Zuul-better en dan weer op Zuul-better, daar staan de meest recente files in. Ik moet morgen ff de oudere files verwijderen.
+Een avonturenspel vol met spannende gevechten en geheime plekken. Probeer de eindbaas te verslaan, maar pas op! Vijanden liggen overal op de loer...
